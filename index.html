@@ -1,0 +1,1511 @@
+<!--
+
+This tool was made while I was working at Verio Inc. between 12/15/10 and 11/11/11. There are other tools made
+but I made this one to fit my needs and style. If you don't like my style, feel free to change the colors 
+(or anything else) to whatever you like. What's nice about this tool is that it's just an .html file and all 
+Javascript and CSS is contained inside their respective tags. So, you don't need a server to serve this website.
+Any browser can open this file stored on your local computer (the preferred method). It's only been fully
+developed and tested in Firefox and Chrome. The tool works and looks better in Chrome than in Firefox because
+it has faster Javascript and the fields fit nicer. If you don't see the "hold" link at the bottom of the page,
+you have to disable the Bookmarks toolbar, the Menu bar, or the status bar. It's advisable to do this because 
+the hold feature lets you know when you've been on hold longer than 2 minutes. The manner in which it notifies
+is customizable, as noted above.
+
+I made this tool to reduce the amount of time it takes to log notes in our ticketing system(s). Especially
+when it comes to escalations/delegations and sending out emails as you don't need to look up the correct template 
+in the Knowledge Base.
+
+WARNING: Since the templates are all hard-coded into this file, changes to the various templates in KB will not
+automatically be propagated into this tool. So, take heed to the Weekly Summary of Important ServiceDesk 
+Announcements to see if any article or SOP changes affect the contents of this tool. (As of today's date, 
+the tool is in compliance with all of the templates, but I could be wrong)
+
+You can use TAB and Shift-TAB to navigate through the form fields. Hitting TAB on the last field of each form 
+takes you to the "create" link, which upon depressing the Enter key, creates the text you can then put into the 
+case (the text is already selected, so all you have to do is Ctrl-C to copy).
+
+The Additional Notes field is not included when you create the form. I use it mainly to put in the UserID and 
+Password.
+
+Please see the other comments next to the code for additional functionality. If you have any questions, comments 
+or concerns, please contact me. I may continue to work on this even after my employment at Verio is over because 
+there's one feature I want to try to do add as a test. So, let me know if you want any future updates but be 
+assurred I will only implement it in Chrome.
+
+David Lurth
+dmlurth@gmail.com
+11/7/2011
+
+-->
+
+<html>
+<head>
+	<script type="text/javascript">
+
+// Variable Initialization - fairly self explanatory
+		var sections = new Array("notes_tab","notes_first","notes_second","escalate_tab","response_tab",
+								  "response_form","redirect_tab","title_tab","title_form","title",
+								  "body_tab","body_first","body_second","email_tab","email_form","remedyURL",
+								  "displayArea","att_tab","att_cancel_tab","att_misdirect_tab",
+								  "att_misdirect_form","att_phone","att_cancel_form","att_delegate_tab",
+								  "att_delegate_form","tierII_tab","domreg_tab","domreg_form","notice");
+		var homeTabs = new Array("escalate_tab","email_tab","att_tab","notes_tab");
+		var escalateTabs = new Array("tierII_tab","domreg_tab");
+		var tierIITabs = new Array("redirect_tab","response_tab");
+		var redirectTabs = new Array("body_tab","title_tab");
+		var attTabs = new Array("att_misdirect_tab","att_delegate_tab","att_cancel_tab");
+		var currentTabs;
+		var tabPos = new Array(-15,-30,-45,-60);
+		var homeArrowPosition = 40;
+		var escalateArrowPosition = 110;
+		var tierIIArrowPosition = 167;
+		var redirectArrowPosition = 238;
+		var attArrowPosition = 75;
+		var descendSpeed = 5;
+		var descendRate = 1;
+		var backgroundColor = "black";
+		var alertColor = "#3B0B24";
+		var firefox = false;
+		var channelName;
+		var channelInfo;
+		var verioAutobahn = "Verio Customer Care\nsupport@verio-hosting.com\n(888)663-6648\n\n" +
+							 "Visit our support site at http://support.verio.com";
+		var verioNimbus = "Verio Customer Care\nsupport@veriohosting.com\n(888)663-6648\n\n" +
+						   "Visit our support site at http://support.verio.com";
+		var rapidsite = "Rapidsite Customer Care\nsupport@viaverio.com\n(888)727-4326\n\n";
+		var viaVerio = "viaVerio Customer Care\nsupport@viaverio.com\n(888)224-9346\nwww.viaverio.com";
+		var att = "AT&T Web Hosting\nhttp://webhosting.att.com/\n1-888-WEB-HOST";
+		var seconds = 0;
+		var minutes = 0;
+		var hold;
+		var holdOn = false;
+		var alert;
+		var black = true;
+		var currentForm;
+		var formPos = -170;
+		var formMove;
+		var leftPos = -170;
+		var rightPos = 400;
+		var leftStop;
+		var rightStop;
+		var currentLeft;
+		var currentRight;
+		var leftContinue = true;
+		var rightContinue = true;
+		var moveRate = 2;
+		var rows = 0;
+		var cols = 0;
+		var topCorner;
+		var topDec;
+		var leftCorner;
+		var displayDirection;
+		var displayEnlarge;
+		var rowsContinue = true;
+		var colsContinue = true;
+		var rowsAmount = 50;
+		var state;
+		var localReset;
+		var localReseted = false;
+		var localDiv;
+
+// Check to see what browser is used - must be Chrome or Firefox
+		function setBrowser()
+		{
+			browser = navigator.userAgent;
+			var chrome = /chrome/i;
+			var firefox = /firefox/i;
+
+			if (chrome.test(browser))
+				start();
+			else if (firefox.test(browser))
+				setFirefox();
+			else
+				getDiv("background").innerHTML = "you must use chrome or firefox, please.";
+		}
+// CSS changes that need to be made because in how Chrome and Firefox display HTML.
+		function setFirefox()
+		{
+			firefox = true;
+			descendSpeed = 10;
+			descendRate = 2;
+			moveRate = 5;
+			rowsAmount = 19;
+			getDiv("CallerWanted").rows = 5;
+			getDiv("NotesSinfo").rows = 7;
+			getDiv("Found").rows = 6;
+			getDiv("Taken").rows = 6;
+			getDiv("Needed").rows = 1;
+			getDiv("ResponderFound").style.top = 350;
+			getDiv("ActionsTaken").style.top = 475;
+			getDiv("ActionsNeeded").style.top = 600;
+			getDiv("AdditionalNotes").style.top = 680;
+			getDiv("AddNotes").rows = 9;
+			getDiv("BodyServerInfo").rows = 7;
+			getDiv("BodyError").rows = 5;
+			getDiv("BodySteps").rows = 5;
+			getDiv("BodyTrouble").rows = 5;
+			getDiv("BodyPrior").rows = 1;
+			getDiv("textDisplay").rows = 16;
+			getDiv("att_request").rows = 15;
+			getDiv("att_phone").style.top = 460;
+			getDiv("att_phone_local").style.top = 460;
+			getDiv("MisWhois").rows = 10;
+			getDiv("MisProduct").rows = 1;
+			getDiv("email_body").rows = 25;
+			getDiv("whois").rows = 23;
+			getDiv("hold").style.top = 860;
+			getDiv("stop").style.top = 860;
+			getDiv("time").style.top = 850;
+			getDiv("notice").style.top = 655;
+
+			start();
+		}
+// Displays notes form first - this could be modified if you want to show a different form first
+		function start()
+		{
+			getDiv("notes_tab").style.top = 8;
+			hideAll("notes_tab");
+			moveArrow(homeArrowPosition);
+			showNotes();
+//			showNotice();
+		}
+// Hides all tabs in the sections array except "tab"
+		function hideAll(tab)
+		{
+			for (i=0;i<sections.length;i++)
+			{
+				if (tab == sections[i])
+					getDiv(sections[i]).style.display = "block";
+				else
+					getDiv(sections[i]).style.display = "none";
+			}
+		}
+// Moves the greater than sign to "position" pixels from the left side of the window
+		function moveArrow(position)
+		{
+			getDiv("arrow").style.left = position;
+		}
+// Causes the forms in the "tabs" array to descend from the top of the window
+		function startDescend(tabs,arrowPosition)
+		{
+			moveArrow(arrowPosition);
+			currentTabs = tabs;
+			descendTabs();
+		}
+// I had to create separate variables for "descendRate" and "descendSpeed" to account for the differences of speed 
+// in which Firefox and Chrome process Javascript. I had to double the speed and rate in setFirefox() to make the 
+// descent faster because Firefox is slower.
+		function descendTabs()
+		{
+			for (i=0;i<currentTabs.length;i++)
+			{
+				getDiv(currentTabs[i]).style.top = tabPos[i];
+				tabPos[i] += descendRate;
+			}
+
+			if (tabPos[currentTabs.length - 1] >= 9)
+			{
+				clearTimeout(moveTabs);
+				resetTabPos();
+			}
+			else
+				moveTabs = setTimeout("descendTabs()",descendSpeed);
+		}
+// Resets the style.top pixel position to start off-screen for the next descendTabs()
+		function resetTabPos()
+		{
+			tabPos = new Array(-15,-30,-45,-60);
+		}
+		function showTabs(tabs)
+		{
+			for (i=0;i<tabs.length;i++)
+			{
+				getDiv(tabs[i]).style.display = "block";
+			}
+		}
+// The moveForm... functions were used as part of an older version of my Tool. No functionality is lost without
+// their utilization, only some eye candy. It works like descendTabs() but the whole forms are moved in horizontally
+// from either side of the window.
+		function moveFormStart(form)
+		{
+			currentForm = form;
+			moveForm();
+		}
+		function moveForm()
+		{
+			formPos += moveRate;
+			getDiv(currentForm).style.left = formPos;
+
+			if (formPos >= 8)
+			{
+				clearTimeout(formMove);
+				formPos = -170;
+			}
+			else
+				formMove = setTimeout("moveForm()",1);
+		}
+		function moveFormHalvesStart(left,leftEnd,right,rightEnd)
+		{
+			currentLeft = left;
+			leftStop = leftEnd;
+			currentRight = right;
+			rightStop = rightEnd;
+
+			moveFormHalves();
+		}
+		function moveFormHalves()
+		{
+			if (leftContinue)
+			{
+				if (leftPos >= leftStop)
+				{
+					leftContinue = false;
+					leftPos = -170;
+				}
+				else
+				{
+					leftPos += moveRate;
+					getDiv(currentLeft).style.left = leftPos;
+				}
+			}
+			if (rightContinue)
+			{
+				if (rightPos <= rightStop)
+				{
+					rightContinue = false;
+					rightPos = 500;
+				}
+				else
+				{
+					rightPos -= moveRate;
+					getDiv(currentRight).style.left = rightPos;
+				}
+			}
+
+			if (!leftContinue && !rightContinue)
+			{
+				clearTimeout(formMove);
+				leftContinue = true;
+				rightContinue = true;
+			}
+			else
+				formMove = setTimeout("moveFormHalves()",1);
+		}
+		function showHome()
+		{
+			hideAll("home");
+			showTabs(homeTabs);
+			startDescend(homeTabs,homeArrowPosition);
+		}
+		function showNotes()
+		{
+			getDiv("notes_form").style.display = "block";
+			getDiv("notes_first").style.display = "block";
+			getDiv("notes_second").style.display = "block";
+			getDiv("displayArea").style.display = "none";
+			getDiv("escalate_tab").style.display = "none";
+			getDiv("email_tab").style.display = "none";
+			getDiv("att_tab").style.display = "none";
+//			moveFormHalvesStart("notes_first",8,"notes_second",164);
+			getDiv("notes_form").elements[0].focus();
+		}
+		function showEscalate()
+		{
+			hideAll("escalate_tab");
+			showTabs(escalateTabs);
+			getDiv("escalate_tab").style.top = 8;
+			startDescend(escalateTabs,escalateArrowPosition);
+		}
+		function showTierII()
+		{
+			showTabs(tierIITabs);
+			getDiv("domreg_tab").style.display = "none";
+			getDiv("tierII_tab").style.top = 8;
+			getDiv("response_form").style.display = "none";
+			getDiv("remedyURL").style.display = "none";
+			getDiv("title").style.display = "none";
+			getDiv("title_form").style.display = "none";
+			getDiv("title_tab").style.display = "none";
+			getDiv("body_form").style.display = "none";
+			getDiv("body_tab").style.display = "none";
+			getDiv("displayArea").style.display = "none";
+			startDescend(tierIITabs,tierIIArrowPosition);
+		}
+		function showResponse()
+		{
+			getDiv("response_form").style.display = "block";
+			getDiv("displayArea").style.display = "none";
+			getDiv("redirect_tab").style.display = "none";
+			getDiv("response_form").elements[0].value = getDiv("notes_form").elements[0].value;	// puts notes.name into response.name
+			getDiv("response_form").elements[2].value = getDiv("notes_form").elements[3].value;	// puts notes.case into response.case
+			showRemedyURL("responseChannel");
+//			moveFormHalvesStart("response_form",8,"remedyURL",190);
+		}
+		function showRedirect()
+		{
+			showTabs(redirectTabs);
+			getDiv("redirect_tab").style.top = 8;
+			getDiv("response_tab").style.display = "none";
+			getDiv("title").style.display = "none";
+			getDiv("title_form").style.display = "none";
+			getDiv("body_form").style.display = "none";
+			getDiv("displayArea").style.display = "none";
+			startDescend(redirectTabs,redirectArrowPosition);
+		}
+		function showTitle()
+		{
+			getDiv("title_form").style.display = "block";
+			getDiv("body_tab").style.display = "none";
+			getDiv("body_form").style.display = "none";
+			getDiv("title").style.display = "none";
+			getDiv("title_form").elements[3].value = getDiv("notes_form").elements[2].value;	// puts notes.userid into title.userid
+//			moveFormStart("title_form");
+		}
+		function showBody()
+		{
+			getDiv("title_tab").style.display = "none";
+			getDiv("displayArea").style.display = "none";
+			getDiv("body_tab").style.top = 8;
+			getDiv("body_form").style.display = "block";
+			getDiv("body_first").style.display = "block";
+			getDiv("body_second").style.display = "block";
+			getDiv("body_form").elements[0].value = getDiv("notes_form").elements[8].value;	// puts notes.sinfo into body.sinfo
+			getDiv("body_form").elements[3].value = getDiv("notes_form").elements[6].value;	// puts notes.authenticated into body.authenticated
+//			moveFormHalvesStart("body_first",8,"body_second",190);
+		}
+		function showDomreg()
+		{
+			getDiv("domreg_form").style.display = "block";
+			getDiv("displayArea").style.display = "none";
+			getDiv("tierII_tab").style.display = "none";
+			getDiv("domreg_form").elements[0].value = getDiv("notes_form").elements[1].value;	// puts notes.domain into domreg.domain
+			getDiv("domreg_form").elements[1].value = getDiv("notes_form").elements[2].value;	// puts notes.userid into domreg.groupuserid
+			getDiv("domreg_form").elements[4].value = getDiv("notes_form").elements[6].value;	// puts notes.authenticated into domreg.authenticated
+//			moveFormStart("domreg_form");
+		}
+		function showEmail()
+		{
+			getDiv("email_form").style.display = "block";
+			getDiv("displayArea").style.display = "none";
+			getDiv("escalate_tab").style.display = "none";
+			getDiv("notes_tab").style.display = "none";
+			getDiv("att_tab").style.display = "none";
+			getDiv("email_tab").style.top = 8;
+			getDiv("email_form").elements[0].value = getDiv("notes_form").elements[0].value;	// puts notes.name into email.name
+			showRemedyURL("emailChannel");
+//			moveFormHalvesStart("email_form",8,"remedyURL",190);
+		}
+		function showATT()
+		{
+			hideAll("att_tab");
+			showTabs(attTabs);
+			getDiv("att_tab").style.top = 8;
+			startDescend(attTabs,attArrowPosition);
+		}
+		function showATTMisdirect()
+		{
+			getDiv("att_misdirect_form").style.display = "block";
+			getDiv("att_phone").style.display = "block";
+			getDiv("displayArea").style.display = "none";
+			getDiv("att_cancel_tab").style.display = "none";
+			getDiv("att_delegate_tab").style.display = "none";
+			getDiv("att_misdirect_tab").style.top = 8;
+			getDiv("att_misdirect_form").elements[0].value = getDiv("notes_form").elements[0].value;	// puts notes.name into misdirect.name
+			getDiv("att_misdirect_form").elements[1].value = getDiv("notes_form").elements[1].value;	// puts notes.domain into misdirect.domain
+			getDiv("local1").style.display = "block";
+			getDiv("local3").style.display = "none";
+//			moveFormHalvesStart("att_misdirect_form",8,"att_phone",180);
+		}
+		function selectLocalPhone(type)
+		{
+			state = getDiv("att_select_state").options[getDiv("att_select_state").selectedIndex].value;
+
+			if (state == "Select State")
+			{
+				localDiv = "local3";
+				mustSelectLocal();
+			}
+			else
+				selectNumber(type);
+		}
+		function selectNumber(type)
+		{
+			var numberFound;
+
+			switch(state)
+			{
+				case "Arkansas":
+					if (type == "Residential")
+						numberFound = "800-464-7928";
+					else
+						numberFound = "800-499-7928";
+					break;
+
+				case "California":
+					if (type == "Residential")
+						numberFound = "800-310-2355";
+					else
+						numberFound = "800-750-2355";
+					break;
+
+				case "Connecticut":
+					if (type == "Residential")
+						numberFound = "800-453-7368";
+					else
+						numberFound = "800-648-3920";
+					break;
+
+				case "Illinois":
+					numberFound = "800-244-4444";
+					break;
+
+				case "Indiana":
+					if (type == "Residential")
+						numberFound = "800-742-8771";
+					else
+						numberFound = "800-321-2000";
+					break;
+
+				case "Michigan":
+					if (type == "Residential")
+						numberFound = "800-244-4444";
+					else
+						numberFound = "800-321-2000";
+					break;
+
+				case "Missouri": case "Kansas": case "Oklahoma": case "Texas":
+					if (type == "Residential")
+						numberFound = "800-585-7928";
+					else
+						numberFound = "800-559-7928";
+					break;
+
+				case "Ohio":
+					if (type == "Residential")
+						numberFound = "800-660-1000";
+					else
+						numberFound = "800-321-2000";
+					break;
+
+				case "Wisconsin":
+					if (type == "Residential")
+						numberFound = "800-924-1000";
+					else
+						numberFound = "800-321-2000";
+					break;
+
+				case "Nevada":
+					numberFound = "877-469-2355";
+					break;
+
+				case "Alabama": case "Florida": case "Georgia": case "Kentucky": case "Louisiana": case "Mississippi": case "North Carolina": case "South Carolina": case "Tennessee":
+					if (type == "Residential")
+						numberFound = "866-805-3921";
+					else
+						numberFound = "866-620-6000";
+					break;
+
+				default:
+			}
+
+			getDiv("att_misdirect_form").elements[4].value = numberFound;
+			getDiv("att_misdirect_form").elements[5].value = state;
+		}
+		function mustSelectLocal()
+		{
+			getDiv("local1").style.display = "none";
+			getDiv(localDiv).style.display = "block";
+			mustSelectLocalReset();
+		}
+		function mustSelectLocalReset()
+		{
+			if (!localReseted)
+			{
+				localReseted = true;
+				localReset = setTimeout("mustSelectLocalReset()",825);
+			}
+			else
+			{
+				localReseted = false;
+				clearTimeout(localReset);
+				getDiv("local1").style.display = "block";
+				getDiv(localDiv).style.display = "none";
+			}
+		}
+		function putPhone(product,number)
+		{
+			getDiv("att_misdirect_form").elements[2].value = product;
+			getDiv("att_misdirect_form").elements[4].value = number;
+
+			if (getDiv("att_misdirect_form").elements[1].value == "")
+				getDiv("att_misdirect_form").elements[1].value = product;
+		}
+		function showATTCancel()
+		{
+			getDiv("att_cancel_form").style.display = "block";
+			getDiv("displayArea").style.display = "none";
+			getDiv("att_misdirect_tab").style.display = "none";
+			getDiv("att_delegate_tab").style.display = "none";
+			getDiv("att_dnrRenewDate").style.display = "none";
+			getDiv("att_cancel_form").elements[0].value = getDiv("notes_form").elements[0].value;	// puts notes.name into misdirect.name
+			getDiv("att_cancel_form").elements[1].value = "canceling hosting";
+			getDiv("att_cancel_form").elements[2].value = getDiv("notes_form").elements[1].value;	// puts notes.domain inot misdirect.domain
+
+			var date = new Date();
+			getDiv("att_cancel_form").elements[3].value = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+
+			showDNRRenewDate();
+			showHostingRenewDate();
+//			moveFormStart("att_cancel_form");
+		}
+		function showATTDelegate()
+		{
+			getDiv("att_delegate_form").style.display = "block";
+			getDiv("displayArea").style.display = "none";
+			getDiv("att_cancel_tab").style.display = "none";
+			getDiv("att_misdirect_tab").style.display = "none";
+			getDiv("att_delegate_tab").style.top = 8;
+			getDiv("att_delegate_form").elements[0].value = getDiv("notes_form").elements[0].value;
+			getDiv("att_delegate_form").elements[1].value = getDiv("notes_form").elements[4].value;
+			getDiv("att_delegate_form").elements[4].value = getDiv("notes_form").elements[1].value;
+//			moveFormHalvesStart("att_delegate_form",8,"att_delegate_last",170);
+		}
+		function createNotes()
+		{
+			var text = "";
+			var notes = getDiv("notes_form");
+			text += notes.elements[0].name + " " + notes.elements[0].value + "\n";
+			text += notes.elements[1].name + " " + notes.elements[1].value + "\n";
+			text += notes.elements[2].name + " " + notes.elements[2].value + "\n";
+			if (notes.elements[3].value != "")
+				text += notes.elements[3].name + " " + notes.elements[3].value + "\n";
+			text += notes.elements[4].name + " " + notes.elements[4].value + "\n";
+			text += notes.elements[5].name + " " + notes.elements[5].value + "\n";
+			text += notes.elements[6].name + " " + notes.elements[6].value + "\n\n";
+			text += notes.elements[7].name + "\n" + notes.elements[7].value + "\n\n";
+			text += notes.elements[8].name + "\n" + notes.elements[8].value + "\n\n";
+			text += notes.elements[9].name + "\n" + notes.elements[9].value + "\n\n";
+			text += notes.elements[10].name + "\n" + notes.elements[10].value + "\n\n";
+			text += notes.elements[11].name + "\n" + notes.elements[11].value;
+
+			displayForm("notes_form",text,"left",true);
+		}
+		function createResponse()
+		{
+			getDiv("remedyURL").style.display = "none";
+			setChannel(getDiv("responseChannel").selectedIndex);
+
+			if (getDiv("remedyURL").elements[2].checked)
+			{
+				var incident = getDiv("remedyURL").elements[0].value;
+				var userID = getDiv("remedyURL").elements[1].value;
+
+				channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident + 
+							  "&acctid=" + userID + "\n(888)663-6648\n\nVisit our support site at http://support.verio.com";
+			}
+
+			var form = getDiv("response_form");
+			var response = "Hello " + form.elements[0].value + ",\n\n" +
+							"Thank you for contacting " + channelName + " Web Hosting Customer Care.\n\n" +
+							"I have duplicated the reported issue regarding:\n\n" +
+							"===========================================\n\n" +
+							form.elements[1].value + "\n\n" +
+							"===========================================\n\n" +
+							"I have determined that further research is required. " +
+							"I am currently working on this issue for you but will need " +
+							"more time to research this matter. Please be advised that " +
+							"these cases are handled with diligence and most are answered "+
+							"within 24 hours. I will make sure you are notified via e-mail "+
+							"as soon as we have an answer for you.\n\nThank you for your " +
+							"patience as I work to address this issue for you. For reference, " +
+							"your Technical Support case number is:\n\n" + 
+							form.elements[2].value + "\n\n" +
+							"Let us know if you have any questions or need additional assistance.\n\n" +
+							"Regards,\n\n" + form.elements[3].value + "\n" + channelInfo;
+			
+			displayForm("response_form",response);
+		}
+// There's a tool to create the title for a Tier II escalation in the general escalation template I believe, but
+// that uses server-side PHP script to generate it. I copied the HTML which can be seen below, but I had to write
+// this Javascript to process the form.
+		function createTitle()
+		{
+			var form = getDiv("title_form");
+			var sevIndex = form.elements[0].selectedIndex;
+			var sevValue = form.elements[0].options[sevIndex].value;
+			var urgIndex = form.elements[1].selectedIndex;
+			var urgValue = form.elements[1].options[urgIndex].value;
+			var priority = Number(sevValue) + Number(urgValue);
+			var server = form.elements[2].value;
+			var userid = form.elements[3].value;
+			var platform = form.elements[4].value;
+			var description = form.elements[5].value;
+			var title = "Pri " + priority + " = (Imp " + sevValue + " + Urg " + urgValue + ") - " + 	platform + " - " + server + ", " + userid + " - " + description;
+			getDiv("title_form").style.display = "none";
+			getDiv("title").elements[0].value = title;
+			getDiv("title").style.display = "block";
+			getDiv("title").elements[0].select();
+		}
+		function createBody()
+		{
+			text = create("body_form");
+			displayForm("body_form",text,"left",true);
+		}
+		function createDomreg()
+		{
+			text = create("domreg_form");
+			displayForm("domreg_form",text,"left",true);
+		}
+		function createEmail()
+		{
+			getDiv("remedyURL").style.display = "none";
+			setChannel(getDiv("emailChannel").selectedIndex);
+
+			if (getDiv("remedyURL").elements[2].checked)
+			{
+				var incident = getDiv("remedyURL").elements[0].value;
+				var userID = getDiv("remedyURL").elements[1].value;
+
+				channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident + 
+							  "&acctid=" + userID + "\n(888)663-6648\n\nVisit our support site at http://support.verio.com";
+			}
+
+			var form = getDiv("email_form");
+			var email = "Hello " + form.elements[0].value + ",\n\n" +
+							"Thank you for contacting " + channelName + " Web Hosting Customer Care. " +
+							"You contacted us regarding " + form.elements[1].value + ".\n\n" +
+							"I apologize for any inconvenience you might have experienced with this issue.\n\n" +
+							form.elements[2].value + "\n\n" +
+							"If you have any questions or concerns, please let us know. We are here 24 hours 7 days a week.\n\n" +
+							"Kind regards,\n\n" + form.elements[3].value + "\n" + channelInfo;
+
+			displayForm("email_form",email,"left",true);
+		}
+		function showRemedyURL(channel)
+		{
+			if (channel == "emailChannel")
+				if (firefox)
+					getDiv("remedyURL").style.top = 518;
+				else
+					getDiv("remedyURL").style.top = 478;
+			else if (firefox)
+				getDiv("remedyURL").style.top = 146;
+			else
+				getDiv("remedyURL").style.top = 121;
+
+			var type = getDiv(channel).selectedIndex;
+
+			if (type == 0 || type == 1)
+				getDiv("remedyURL").style.display = "block";
+			else
+				getDiv("remedyURL").style.display = "none";
+		}
+		function createATTMisdirect()
+		{
+			text = create("att_misdirect_form");
+			getDiv("att_phone").style.display = "none";
+			displayForm("att_misdirect_form",text,"left",true);
+		}
+		function createATTCancel()
+		{
+			var form = getDiv("att_cancel_form");
+			var text = "Hello " + form.elements[0].value + ",\n\n" +
+							"Thank you for contacting AT&T Web Hosting Customer Service. " +
+							"You contacted us regarding " + form.elements[1].value + ".\n\n" +
+							"We regret any inconvenience you might have experienced with this issue. " +
+							"In response to your request, the web hosting account for " +
+							form.elements[2].value + " has been canceled effective " + form.elements[3].value + ".\n\n";
+			
+			var type = getDiv("att_CancelType").selectedIndex;
+
+			if (type == 0)
+				;
+			else if (type == 1)
+			{
+
+				text += "Our records show that you also have the domain registration product on this account." +
+						"Therefore with the web hosting canceled, your account will be downgraded and remain active " +
+						"as a domain registration only account.\n\nIf you do not wish to keep the domain registration, " +
+						"please reply to this email authorizing us not to renew it (non-renew).\n\n";
+			}
+			else
+			{
+				text += "In addition, the Domain Name Registration has also been set to not renew at the next renewal date " + 
+						 form.elements[5].value + ".\n\n";
+			}
+			
+			var refund = getDiv("att_CancelRefund").selectedIndex;
+
+			if (refund == 0)
+				text += "If a refund is due, you will receive it within 60-90 days. ";
+			else if (refund == 1)
+			{
+				text += "Please be advised that your request is past the " + form.elements[7].value + 
+						" renewal date, therefore no refund will be issued for this cancelation. " +
+						"If your payment method is Billing Telephone Number (BTN), this last charge was " + 
+						"already exported to your local telephone office and it may take 60-90 days " +
+						"to be reflected on your phone bill statement.\n\n";
+			}
+			else
+			{
+				text += "Please be advised that the cancelation falls within the first 30 days of service. " +
+						"Therefore you will be given a full refund, excluding mandatory setup fees, ala carte " +
+						"items and applicable domain registration fees. If your payment method is Billing Telephone " +
+						"Number (BTN), it may take 60-90 days for this change to be reflected on your phone bill statement.";
+			}
+
+			text += "To view AT&T web hosting refund policy, please visit:\n\nhttp://webhosting.att.com/Terms-Conditions.aspx\n\n" +
+					"We apologize for any inconvenience and thank you for choosing AT&T Web Hosting.\n\n" +
+					form.elements[8].value + "\n" + att;
+
+			displayForm("att_cancel_form",text);
+		}
+		function createATTDelegate()
+		{
+			text = create("att_delegate_form");
+			displayForm("att_delegate_form",text,"left",true);
+		}
+		function showDNRRenewDate()
+		{
+			var type = getDiv("att_CancelType").selectedIndex;
+
+			if (type == 2)
+				getDiv("att_dnrRenewDate").style.display = "block";
+			else
+				getDiv("att_dnrRenewDate").style.display = "none";
+
+			if (firefox)
+				getDiv("att_dnrRenewDate").style.top = 190;
+		}
+		function showHostingRenewDate()
+		{
+			var type = getDiv("att_CancelRefund").selectedIndex;
+
+			if (type == 1)
+				getDiv("att_hostingRenewDate").style.display = "block";
+			else
+				getDiv("att_hostingRenewDate").style.display = "none";
+		}
+		function setChannel(index)
+		{
+			if (index == 0)
+			{
+				channelName = "Verio";
+				channelInfo = verioAutobahn;
+			}
+			else if (index == 1)
+			{
+				channelName = "Verio";
+				channelInfo = verioNimbus;
+			}
+			else if (index == 2)
+			{
+				channelName = "Rapidsite";
+				channelInfo = rapidsite;
+			}
+			else if (index == 3)
+			{
+				channelName = "viaVerio";
+				channelInfo = viaVerio;
+			}
+			else
+			{
+				channelName = "AT&T";
+				channelInfo = att;
+			}
+		}
+		function create(tab)
+		{
+			var text = "";
+			var form = getDiv(tab);
+			var att_form = /att_/;
+			var att = att_form.test(tab);
+
+			for (var i=0; i<form.length; i++)
+			{
+				var contents = form.elements[i].value;
+				if (contents != "")
+				{
+					text += form.elements[i].name;
+					if (att)
+						text += " ";
+					else
+						text += "\n";
+					text += contents + "\n\n";
+				}
+			}
+			return text;
+		}
+// This is for the animation that occurs after creating a form. It required a lot of trial and error to get the numbers
+// right for the different browers. I wrote it awhile ago and I forget exactly how it works and I don't feel like
+// going back and figuring it out again to be able to explain it clearly.
+		function displayForm(form,text,direction,large)
+		{
+			getDiv(form).style.display = "none"
+			getDiv("displayArea").style.display = "block";
+			getDiv("displayArea").elements[0].value = text;
+			getDiv("displayArea").elements[0].select();
+
+			displayDirection = direction;
+			
+			if (firefox)
+			{
+				topCorner = 545;
+				rowsAmount = 40;
+				topDec = 13;
+			}
+			else if (large)
+			{
+				topCorner = 675;
+				rowsAmount = 50;
+				topDec = 13;
+			}
+			else
+			{
+				topCorner = 255;
+				rowsAmount = 23;
+				topDec = 10;
+			}
+
+			createDisplay();			
+		}
+		function createDisplay()
+		{
+			if (rowsContinue)
+			{
+				if (rows == rowsAmount)
+				{
+					rowsContinue = false;
+					rows = 0;
+				}
+				else
+				{
+					rows++;
+					getDiv("textDisplay").rows = rows;
+					topCorner-=topDec;
+					getDiv("displayArea").style.top = topCorner;
+
+					if (displayDirection == "right")
+						leftCorner-=10;
+
+					getDiv("displayArea").style.left = leftCorner;
+				}
+			}
+			if (colsContinue)
+			{
+				if (cols == 48)
+				{
+					colsContinue = false;
+					cols = 0;
+				}
+				else
+				{
+					cols+=2;
+					getDiv("textDisplay").cols = cols;
+				}
+			}
+
+			if (!rowsContinue && !colsContinue)
+			{
+				clearTimeout(displayEnlarge);
+				rowsContinue = true;
+				colsContinue = true;
+			}
+			else
+				displayEnlarge = setTimeout("createDisplay()",15);
+		}
+		function clear(tab)
+		{
+			var form = document.getElementById(tab + "_form");
+			for (var i=0; i<form.length; i++)
+				form.elements[i].value = "";
+		}
+// This function is so the code looks nicer and takes less time to write. It's annoying to have to write out
+// document.getElementById() every time you want to get an element.
+		function getDiv(div)
+		{
+			return document.getElementById(div);
+		}
+// I'm most proud of this feature. It's most useful and it was fun to write. If you want to change the color,
+// just change backgroundColor and alertColor to your preference where the variables are initialized.
+		function holdStart()
+		{
+			getDiv("hold").style.display = "none";
+			getDiv("stop").style.display = "block";
+			holdCount();
+		}
+		function holdCount()
+		{
+			if (!holdOn)
+			{
+				if (seconds == 60)
+				{
+					minutes++;
+					if (minutes == 2)
+						alertStart();
+					seconds = 0;
+				}
+				if (seconds < 10)
+					getDiv("time").innerHTML = minutes + ":0" + seconds;
+				else
+					getDiv("time").innerHTML = minutes + ":" + seconds;
+				seconds++;
+
+				hold = setTimeout("holdCount()",1000);
+			}
+		}
+		function stop()
+		{
+			clearTimeout(hold);
+			holdOn = false;
+			clearTimeout(alert);
+			black = true;
+			seconds = 0;
+			minutes = 0;
+			getDiv("background").style.backgroundColor = backgroundColor;
+			getDiv("hold").style.display = "block";
+			getDiv("stop").style.display = "none";
+			getDiv("time").innerHTML = "";
+		}
+		function alertStart()
+		{
+			if (black)
+			{
+				getDiv("background").style.backgroundColor = alertColor;
+				black = false;
+			}
+			else
+			{
+				getDiv("background").style.backgroundColor = backgroundColor;
+				black = true;
+			}
+			alert = setTimeout("alertStart()",500);
+		}
+
+var noticeBlock = false;
+var noticeCount = 0;
+
+		function showNotice()
+		{
+			if (noticeBlock)
+			{
+				getDiv("notice").style.display = "none";
+				noticeBlock = false;
+			}
+			else
+			{
+				getDiv("notice").style.display = "block";
+				noticeBlock = true;
+			}
+
+			if (noticeCount++ == 120)
+				getDiv("background").innerHTML = "Why do you refuse to click on notice?";
+
+			notice = setTimeout("showNotice()",500);
+		}
+		function displayNotice()
+		{
+			notice = "I will be leaving Verio Friday, Nov. 11. So, I imagine paco will be decommissioned shortly" +
+						" thereafter. If you want to continue to use my tool, follow these steps:\n\n" + 
+						"OK, right-click, view source, ctrl-a, ctrl-c, window-r, notepad, enter, ctrl-v, ctrl-s, " + 
+						"something.html, alt-f4, ctrl-o, open something.html.\n\n" +
+						"If you don't want this notice to appear, comment out the showNotice() line in the start() function.";
+			alert(notice);
+		}
+	</script>
+
+	<style type="text/css">
+
+		body {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+		textarea {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+		input {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+		select {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+		a {color:white;text-decoration:none}
+
+		#notes_tab {position:fixed;left:50px}
+		#escalate_tab {position:fixed;left:50px}
+		#tierII_tab {position:fixed;left:121px}
+		#domreg_tab {position:fixed;left:121px}
+		#response_tab {position:fixed;left:177px}
+		#redirect_tab {position:fixed;left:177px}
+		#title_tab {position:fixed;left:249px}
+		#body_tab {position:fixed;left:249px}
+		#email_tab {position:fixed;left:50px}
+		#att_tab {position:fixed;left:50px;top:0}
+		#att_cancel_tab {position:fixed;left:87px}
+		#att_misdirect_tab {position:fixed;left:87px}
+		#att_delegate_tab {position:fixed;left:87px}
+
+		#local3 {font-size:12px;color:red}
+
+		#displayArea {position:fixed;top:200}
+
+		#Caller {position:fixed;top:30}
+		#Domain {position:fixed;top:65}
+		#UserID {position:fixed;top:100}
+		#Case {position:fixed;top:135}
+		#Callback {position:fixed;top:170}
+		#Relation {position:fixed;top:30;left:190}
+		#Authenticated {position:fixed;top:65;left:190}
+		#Wanted {position:fixed;top:100;left:190}
+		#Sinfo {position:fixed;top:210}
+		#ResponderFound {position:fixed;top:355}
+		#ActionsTaken {position:fixed;top:500}
+		#ActionsNeeded {position:fixed;top:623}
+		#AdditionalNotes {position:fixed;top:705}
+
+		#response_form {position:fixed;top:30}
+
+		#title_form {position:fixed;top:30;left:8}
+		#title {position:fixed;top:30;left:8}
+
+		#body_first {position:fixed;top:30;left:8}
+		#body_second {position:fixed;top:392;left:8}
+
+		#domreg_form {position:fixed}
+
+		#email_form {position:fixed}
+		#remedyURL {position:fixed;display:none;top:500;left:190}
+
+		#hold {position:fixed;top:900}
+		#stop {position:fixed;top:900;display:none}
+		#time {position:fixed;top:890;left:50;font-size:25px}
+
+		#att_cancel_form {position:fixed}
+		#att_delegate_form {position:fixed}
+		#att_misdirect_form {position:fixed}
+		#att_phone {position:fixed;top:490}
+		#att_phone_local {position:fixed;top:490;left:218}
+		#att_dnrRenewDate {position:fixed;left:170;top:165}
+		#att_hostingRenewDate {}
+
+		#arrow {position:fixed;top:8}
+		#NewCase {position:fixed;top:8;left:353;font-size:14px}
+
+		#notice {position:fixed;left:250;top:675;font-size:30px;display:none;color:red}
+
+	</style>
+	<title>Tool</title>
+</head>
+<body id="background" onload="setBrowser()">
+	<a id="notice" href="javascript:displayNotice()">notice</a>
+	<div id="tabs">
+
+		<a id="home_tab" href="javascript:showHome()">home</a>
+
+		<div id="homeTabs">
+			<a id="notes_tab" href="javascript:showNotes()">notes</a>
+			<a id="att_tab" href="javascript:showATT()">att</a>
+			<a id="email_tab" href="javascript:showEmail()">email</a>
+			<a id="escalate_tab" href="javascript:showEscalate()">escalate</a>
+		</div>
+
+		<div id="escalateTabs">
+			<a id="tierII_tab" href="javascript:showTierII()">tierII</a>
+			<a id="domreg_tab" href="javascript:showDomreg()">domreg</a>
+		</div>
+
+		<div id="tierIITabs">
+			<a id="response_tab" href="javascript:showResponse()">response</a>
+			<a id="redirect_tab" href="javascript:showRedirect()">redirect</a>
+		</div>
+
+		<div id="redirectTabs">
+			<a id="title_tab" href="javascript:showTitle()">title</a>
+			<a id="body_tab" href="javascript:showBody()">body</a>
+		</div>
+
+		<div id="attTabs">
+			<a id="att_cancel_tab" href="javascript:showATTCancel()">cancel</a>
+			<a id="att_delegate_tab" href="javascript:showATTDelegate()">delegate</a>
+			<a id="att_misdirect_tab" href="javascript:showATTMisdirect()">misdirect</a>
+		</div>
+	</div>
+	<div id="arrow">></div>
+	<a id="NewCase" href="index.html">+</a>
+	<form id="displayArea">
+		<textarea id="textDisplay" cols=47 rows=23></textarea>
+	</form>
+	<div id="AdditionalNotes">
+		Additional Notes:</br>
+		<textarea id="AddNotes" cols=47 rows=13 name="Additional Notes:"></textarea></br>
+	</div>
+	<form id="notes_form">
+		<div id="notes_first">
+			<div id="Caller">
+				Caller Name:</br>
+				<input type="text" name="Caller Name:" size=23></br>
+			</div>
+			<div id="Domain">
+				Domain:</br>
+				<input type="text" name="Domain:" size=23></br>
+			</div>
+			<div id="UserID">
+				UserID:</br>
+				<input type="text" name="UserID:" size=23></br>
+			</div>
+			<div id="Case">
+				Case #:</br>
+				<input type="text" name="Case #:" size=23></br>
+			</div>
+			<div id="Callback">
+				Callback #:</br>
+				<input type="text" name="Callback #:" size=23></br>
+			</div>
+			<div id="Relation">
+				Relation:</br>
+				<input type="text" name="Relation:" size=23></br>
+			</div>
+			<div id="Authenticated">
+				Authenticated:</br>
+				<input type="text" name="Authenticated:" size=23></br>
+			</div>
+			<div id="Wanted">
+				Caller Wanted:</br>
+				<textarea id="CallerWanted" cols=21 rows=7 name="Caller Wanted:"></textarea></br>
+			</div>
+		</div>
+		<div id="notes_second">
+			<div id="Sinfo">
+				Sinfo:</br>
+				<textarea id="NotesSinfo" cols=47 rows=10 name="Sinfo:"></textarea></br>
+			</div>
+			<div id="ResponderFound">
+				Responder Found:</br>
+				<textarea id="Found" cols=47 rows=10 name="Responder Found:"></textarea></br>
+			</div>
+			<div id="ActionsTaken">
+				Actions Taken:</br>
+				<textarea id="Taken" cols=47 rows=8 name="Actions Taken:"></textarea></br>
+			</div>
+			<div id="ActionsNeeded">
+				Actions Needed:</br>
+				<textarea id="Needed" cols=47 rows=2 name="Actions Needed:"></textarea></br>
+				<a href="javascript:createNotes()">create</a>
+				<a href="javascript:clear('notes')">clear</a>
+			</div>
+		</div>
+	</form>
+	<div id="response">
+		<form id="response_form">
+			Customer Name:</br>
+			<input type="text"/></br>
+			Regarding:</br>
+			<textarea cols=47 rows=3></textarea></br>
+			Case #:</br>
+			<input type="text"/></br>
+			Your Name:</br>
+			<input type="text"/></br>
+		Channel:</br>
+		<select id="responseChannel" onchange="javascript:showRemedyURL('responseChannel')">
+			<option value="Verio Retail Autobahn">Verio Retail Autobahn</option>
+			<option value="Verio Retail Nimbus">Verio Retail Nimbus</option>
+			<option value="Rapidsite">Rapidsite</option>
+			<option value="viaVerio">viaVerio</option>
+			<option value="AT&T">ATT</option>
+		</select></br>
+			<a href="javascript:createResponse()">create</a>
+			<a href="javascript:clear('response')">clear</a>
+		</form>
+	</div>
+	<form id="title_form">
+		Severity:</br>
+		<select size="1" name="severity">
+			<option value="0">0 ** Emergency (0), Multiple Customers on Multiple Boxes.**</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Catastrophic Facility or Network Failure</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Catastrophic Product Failure</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Multiple Server Outage (ServerS Down)</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Multiple Server Core Software Outage (one or more http/ftp/smtp/pop/imap/ssh/cron/mysql/etc)</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;DNS -SERVER- Outage, this is not a single customer with a bad zonefile</option>
+			<option value="1">1 **High (1), Multiple Customers on Single Box**</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Single Server Down (Multiple Customers on ONE server</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Single Server Core Software Outage (one or more http/ftp/smtp/pop/imap/ssh/cron/mysql/etc)</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Single Server Disk Failure</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Single Server Kernel Panic</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;OPB Errors</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Slow Server</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Abusive Customer</option>
+			<option value="2">2 **Executive Escalation (2), I know it**</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Potential Executive Escalation/Important Client Escalation</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Angry Customer</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Customer Demanding Action</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Customer Unsatisfied with Response</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Legal Escalation</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Revenue Threat</option>	
+			<option value="2">&nbsp;&nbsp;&nbsp;Reputation Threat (Damages Customer + Business Relationships)</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Shopsite broken</option>
+			<option value="3">3 **Low (3), I know it**</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Single Customer Question(s)</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Enhancement Requests (i.e. can X functionality be added to webmail)</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;System Administration Issue</option>
+		</select></br>
+		Urgency:</br>
+		<select size="1" name="urgency">
+			<option value="0">0 **Outage (0), I know it**</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Services completely unusable for customer</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Loss of service results in inability to work.</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Business at a standstill or major loss of revenue</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Shopsite is down completely</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Site simply returns an error or doesn't load at all</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Email/DNS/Site/Etc completely nonfunctional</option>
+			<option value="0">&nbsp;&nbsp;&nbsp;Webmail down entirely for more than a single email account</option>
+			<option value="1">1 **Disruption (1), I know it**</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Customer can perform partially.</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Serious impact to business, but not complete failure</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Incursion of delays and postponements</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Site is slow</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Severe Email Delays (more than about an hour)</option>
+			<option value="1">&nbsp;&nbsp;&nbsp;Shopsite returns a customer visible error but works otherwise</option>
+			<option value="2">2 **Inconvenience (2), I know it**</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Customer can perform with some loss of productivity using workarounds</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Shopsite returns an error in the store manager but works otherwise</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Control panel is slow</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Low priority scripting errors</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Minor Mailbock</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Intermittant oddities</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Serious mailblock</option>
+			<option value="2">&nbsp;&nbsp;&nbsp;Restore to fix sitedown</option>
+			<option value="3">3 **Query (3), I know it**</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Questions, Enhancement Requests</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;How can I...</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Can you add ... to the control panel/webmail/etc</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Will you tar.gz my site</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Can you restore some random stuff?</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Do you have any information about...</option>
+			<option value="3">&nbsp;&nbsp;&nbsp;Can ... be enabled on the server?</option>
+		</select></br>
+		Server:</br>
+		<input type="text" name="server"></br>
+		UserID:</br>
+		<input type="text" name="userid"></br>
+		Platform:</br>
+		<input type="text" name="platform"></br>
+		Brief Description:</br><input type="text" name="desc"></br>
+		<a href="javascript:createTitle()">create</a>
+		<a href="javascript:clear('subject')">clear</a>
+	</form>
+	<form id="title">
+		Title:</br>
+		<input type="text" name="title" size="50">
+	</form>
+	<form id="body_form">
+		<div id="body_first">
+			<div id="ServerInfo">
+				Server Info:</br>
+				<textarea id="BodyServerInfo" cols=47 rows=10 name="Server Info:"></textarea></br>
+			</div>
+			<div id="PlanType">
+				Plan Type:</br>
+				<input type="text" name="Plan Type:"></br>
+			</div>
+			<div id="Password">
+				Password:</br>
+				<input type="text" name="Password:"></br>
+			</div>
+			<div id="AuthenticatedBody">
+				Authenticated:</br>
+				<input type="text" name="Authenticated:"></br>
+			</div>
+			<div id="Error">
+				Error msg/Symptoms:</br>
+				<textarea id="BodyError" cols=47 rows=8 name="Error msg/Symptoms:"></textarea></br>
+			</div>
+		</div>
+		<div id="body_second">
+			<div id="Steps">
+				Steps to duplicate:</br>
+				<textarea id="BodySteps" cols=47 rows=8 name="Steps to duplicate:"></textarea></br>
+			</div>
+			<div id="Trouble">
+				Troubleshooting done:</br>
+				<textarea id="BodyTrouble" cols=47 rows=8 name="Troubleshooting done:"></textarea></br>
+			</div>
+			<div id="Prior">
+				Prior history:</br>
+				<textarea id="BodyPrior" cols=47 rows=2 name="Prior history:"></textarea></br>
+				<a href="javascript:createBody()">create</a>
+				<a href="javascript:clear('body')">clear</a>
+			</div>
+		</div>
+	</form>
+	<form id="domreg_form">
+		Domain Name:</br>
+		<input type="text" name="Domain Name:"/></br>
+		Group & User ID:</br>
+		<input type="text" name="Group & User ID:"/></br>
+		Reason For Delegation:</br>
+		<textarea cols=47 rows=2 name="Reason For Delegation:"></textarea></br>
+		Is This A Reseller Account?:</br>
+		<input type="text" name="Is This a Reseller Account?:"/></br>
+		Authenticated Customer?:</br>
+		<input type="text" name="Authenticated Customer:"/></br>
+		Is There a Valid CC On File?:</br>
+		<input type="text" name="Is There a Valid CC On File?:"/></br>
+		Please Copy/Paste Whois Information below:</br>
+		<textarea id="whois" cols=47 rows=33 name="Whois Information:"></textarea></br>
+		<a href="javascript:createDomreg()">create</a>
+		<a href="javascript:clear('domreg')">clear</a>
+	</form>
+	<form id="email_form">
+		Customer Name:</br>
+		<input type="text"/></br>
+		Regarding:</br>
+		<textarea cols=47 rows=1></textarea></br>
+		Body:</br>
+		<textarea id="email_body" cols=47 rows=30></textarea></br>
+		Your Name:</br>
+		<input type="text"/></br>
+		Channel:</br>
+		<select id="emailChannel" onchange="javascript:showRemedyURL('emailChannel')">
+			<option value="Verio Retail Autobahn">Verio Retail Autobahn</option>
+			<option value="Verio Retail Nimbus">Verio Retail Nimbus</option>
+			<option value="Rapidsite">Rapidsite</option>
+			<option value="viaVerio">viaVerio</option>
+			<option value="AT&T">ATT</option>
+		</select></br>
+		<a href="javascript:createEmail()">create</a>
+		<a href="javascript:clear('email')">clear</a>
+	</form>
+	<form id="remedyURL">
+		INC #:</br>
+		<input type="text"/></br>
+		UserID:</br>
+		<input type="text"/></br>
+		<input type="checkbox"/>Include Remedy URL
+	</form>
+	<form id="att_misdirect_form">
+		Caller Name/EmployeeID:</br>
+		<input type="text" name="Caller Name/ATT employee id:"/></br>
+		Acct. Info/Domain:</br>
+		<input type="text" name="Account info/Domain Name:"/></br>
+		Product Line/Issue:</br>
+		<textarea id="MisProduct" cols=47 rows=2 name="Product Line/Issue:"></textarea></br>
+		Dialed Number:</br>
+		<input type="text" name="Dialed Number:"/></br>
+		Number Found:</br>
+		<input type="text" name="Number Found:"/></br>
+		State:</br>
+		<input type="text" name="State customer has service:"/></br>
+		whois:</br>
+		<textarea id="MisWhois" cols=47 rows=15 name="whois:"></textarea></br>
+		<a href="javascript:createATTMisdirect()">create</a>
+		<a href="javascript:clear('att_misdirect')">clear</a>
+	</form>
+	<div id="att_phone">
+		<a href="javascript:putPhone('ATT Yahoo! Web Hosting','800-318-0783')"> ATT Yahoo! Web Hosting:</br>
+		&nbsp;&nbsp;800-318-0783 - 24 x 7</br></a>
+		DSL <a href="javascript:putPhone('DSL Support','877-722-3755')">Support</a>,
+		<a href="javascript:putPhone('DSL Sales','877-722-3755')">Sales</a>,
+		<a href="javascript:putPhone('DSL Billing','877-722-3755')">Billing</a>:</br>
+		&nbsp;&nbsp;877-722-3755 - M-F 8-6pm</br>
+		<a href="javascript:putPhone('TS 360','866-485-9727')">TS 360:</br>
+		&nbsp;&nbsp;866-485-9727</a></br>
+		<a href="javascript:putPhone('ATT Yellowbook','800-929-3556')">ATT Yellowbook:</br>
+		&nbsp;&nbsp;800-929-3556</a></br>
+		<a href="javascript:putPhone('ATT Yellow Pages Hosting','800-343-7390')">ATT Yellow Pages Hosting:</br>
+		&nbsp;&nbsp;800-343-7390</a></br>
+		U-Verse:</br>
+		&nbsp;&nbsp;<a href="javascript:putPhone('U-Verse Tech Support','800-288-2020')">Tech Supp. - 800-288-2020</a></br>
+		&nbsp;&nbsp;<a href="javascript:putPhone('U-Verse Payments','877-543-5937')">Payments - 877-543-5937</a></br>
+		&nbsp;&nbsp;<a href="javascript:putPhone('U-Verse Billing','866-915-6188')">Gen. Billing (SE US)</br>
+		&nbsp;&nbsp;&nbsp;&nbsp;866-915-6188</a></br></br>
+		<form id="att_phone_local">
+			Local Offices:</br>
+			<div id="local1">
+				&nbsp;&nbsp;<select id="att_select_state">
+					<option value="Select State">Select State</option>
+					<option value="Arkansas">Arkansas</option>
+					<option value="California">California</option>
+					<option value="Connecticut">Connecticut</option>
+					<option value="Illinois">Illinois</option>
+					<option value="Indiana">Indiana</option>
+					<option value="Michigan">Michigan</option>
+
+					<option value="Missouri">Missouri</option>
+					<option value="Kansas">Kansas</option>
+					<option value="Oklahoma">Oklahoma</option>
+					<option value="Texas">Texas</option>
+
+					<option value="Ohio">Ohio</option>
+					<option value="Wisconsin">Wisconsin</option>
+					<option value="Nevada">Nevada</option>
+
+					<option value="Alabama">Alabama</option>
+					<option value="Florida">Florida</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Kentucky">Kentucky</option>
+					<option value="Louisiana">Louisiana</option>
+					<option value="Mississippi">Mississippi</option>
+					<option value="North Carolina">North Carolina</option>
+					<option value="South Carolina">South Carolina</option>
+					<option value="Tennessee">Tennessee</option>
+
+				</select></br>
+				&nbsp;&nbsp;<input id="res" type="radio" name="type" value="Residential" onclick="javascript:selectLocalPhone('Residential')"/> Residential</br>
+				&nbsp;&nbsp;<input id="bus" type="radio" name="type" value="Business" onclick="javascript:selectLocalPhone('Business')"/> Business</br>
+			</div>
+			<div id="local3">
+				&nbsp;&nbsp;You must select </br>
+				&nbsp;&nbsp;a State.
+			</div>
+		</form>
+	</div>
+	<form id="att_cancel_form">
+		Customer Name:</br>
+		<input type="text"/></br>
+		Regarding:</br>
+		<textarea cols=35 rows=1></textarea></br>
+		Domain:</br>
+		<input type="text"/></br>
+		Date (MM/DD/YYYY):</br>
+		<input type="text"/></br>
+		Cancel Type:</br>
+		<select id="att_CancelType" onchange="javascript:showDNRRenewDate()">
+			<option value="NO DNR">NO DNR</option>
+			<option value="Downgrade to DNR">Downgrade to DNR</option>
+			<option value="DNR NON-Renewal" >DNR NON-Renewal</option>
+		</select></br>
+		<div id="att_dnrRenewDate">
+			DNR Renew Date (MM/DD/YYYY):</br>
+			<input type="text"/></br>
+		</div>
+		Refund:</br>
+		<select id="att_CancelRefund" onchange="javascript:showHostingRenewDate()">
+			<option value="Annual/Prorated Refund">Annual/Prorated Refund</option>
+			<option value="Monthly/No Refund">Monthly/No Refund</option>
+			<option value="Within 30 days of Activation">Within 30 days of Activation</option>
+		</select></br>
+		<div id="att_hostingRenewDate">
+			Hosting Renew Date (MM/DD/YYYY):</br>
+			<input type="text"/></br>
+		</div>
+		Your Name:</br>
+		<input type="text"/></br>
+		<a href="javascript:createATTCancel()">create</a>
+		<a href="javascript:clear('att_cancel')">clear</a>
+	</form>
+	<form id="att_delegate_form">
+		Contact Name:</br>
+		<input type="text" name="Contact Name:"/></br>
+		Contact Phone Number:</br>
+		<input type="text" name="Contact Phone Number:"/></br>
+		Contact Email:</br>
+		<input type="text" name="Contact Email:"/></br>
+		Account Status:</br>
+		<input type="text" name="Account Status:"/></br>
+		Domain:</br>
+		<input type="text" name="Domain:"/></br>
+		Request:</br>
+		<textarea id="att_request" cols=47 rows=20 name="Request:"></textarea></br>
+			IDS case:</br>
+			<input type="text" name="IDS case:"/></br>
+			ATT Agent ID:</br>
+			<input type="text" name="AT&T Agent ID:"/></br>
+		<a href="javascript:createATTDelegate()">create</a>
+		<a href="javascript:clear('att_delegate')">clear</a>
+	</form>
+	<a id="hold" href="javascript:holdStart()">hold</a>
+	<a id="stop" href="javascript:stop()">stop</a>
+	<div id="time"><div>
+</body>
+</html>
