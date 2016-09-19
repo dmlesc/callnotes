@@ -1,0 +1,67 @@
+body {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+textarea {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+input {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+select {background-color:black;color:white;font-family:"Lucida Console";font-size:12px}
+a {color:white;text-decoration:none}
+
+#notes_tab {position:fixed;left:50px}
+#escalate_tab {position:fixed;left:50px}
+#tierII_tab {position:fixed;left:121px}
+#domreg_tab {position:fixed;left:121px}
+#response_tab {position:fixed;left:177px}
+#redirect_tab {position:fixed;left:177px}
+#title_tab {position:fixed;left:249px}
+#body_tab {position:fixed;left:249px}
+#email_tab {position:fixed;left:50px}
+#att_tab {position:fixed;left:50px;top:0}
+#att_cancel_tab {position:fixed;left:87px}
+#att_misdirect_tab {position:fixed;left:87px}
+#att_delegate_tab {position:fixed;left:87px}
+
+#local3 {font-size:12px;color:red}
+
+#displayArea {position:fixed;top:200}
+
+#Caller {position:fixed;top:30}
+#Domain {position:fixed;top:65}
+#UserID {position:fixed;top:100}
+#Case {position:fixed;top:135}
+#Callback {position:fixed;top:170}
+#Relation {position:fixed;top:30;left:190}
+#Authenticated {position:fixed;top:65;left:190}
+#Wanted {position:fixed;top:100;left:190}
+#Sinfo {position:fixed;top:210}
+#ResponderFound {position:fixed;top:355}
+#ActionsTaken {position:fixed;top:500}
+#ActionsNeeded {position:fixed;top:623}
+#AdditionalNotes {position:fixed;top:705}
+
+#response_form {position:fixed;top:30}
+
+#title_form {position:fixed;top:30;left:8}
+#title {position:fixed;top:30;left:8}
+
+#body_first {position:fixed;top:30;left:8}
+#body_second {position:fixed;top:392;left:8}
+
+#domreg_form {position:fixed}
+
+#email_form {position:fixed}
+#remedyURL {position:fixed;display:none;top:500;left:190}
+
+#hold {position:fixed;top:900}
+#stop {position:fixed;top:900;display:none}
+#time {position:fixed;top:890;left:50;font-size:25px}
+
+#att_cancel_form {position:fixed}
+#att_delegate_form {position:fixed}
+#att_misdirect_form {position:fixed}
+#att_phone {position:fixed;top:490}
+#att_phone_local {position:fixed;top:490;left:218}
+#att_dnrRenewDate {position:fixed;left:170;top:165}
+
+#arrow {position:fixed;top:8}
+#NewCase {position:fixed;top:8;left:353;font-size:14px}
+
+#notice {position:fixed;left:250;top:675;font-size:30px;display:none;color:red}
+
