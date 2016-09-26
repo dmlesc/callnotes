@@ -6,12 +6,12 @@ a {color:white;text-decoration:none}
 
 #notes_tab {position:fixed;left:50px;top:8px}
 #escalate_tab {position:fixed;left:50px}
-#tierII_tab {position:fixed;left:121px}
-#domreg_tab {position:fixed;left:121px}
-#response_tab {position:fixed;left:177px}
-#redirect_tab {position:fixed;left:177px}
-#title_tab {position:fixed;left:249px}
-#body_tab {position:fixed;left:249px}
+#tierII_tab {position:fixed;left:125px}
+#domreg_tab {position:fixed;left:125px}
+#response_tab {position:fixed;left:185px}
+#redirect_tab {position:fixed;left:185px}
+#title_tab {position:fixed;left:262px}
+#body_tab {position:fixed;left:262px}
 #email_tab {position:fixed;left:50px}
 #att_tab {position:fixed;left:50px;top:0}
 #att_cancel_tab {position:fixed;left:87px}
@@ -44,19 +44,19 @@ a {color:white;text-decoration:none}
 #body_first {position:fixed;top:30px;left:8px}
 #body_second {position:fixed;top:392px;left:8px}
 
-#domreg_form {position:fixed}
+#domreg_form {position:fixed;top:30px}
 
-#email_form {position:fixed}
-#remedyURL {position:fixed;display:none;top:500px;left:190px}
+#email_form {position:fixed;top:30px}
+#remedyURL {position:fixed;display:none;top:117px;left:215px}
 
 #hold {position:fixed;top:900px}
 #stop {position:fixed;top:900px;display:none}
 #time {position:fixed;top:890px;left:50px;font-size:25px}
 
-#att_cancel_form {position:fixed}
-#att_delegate_form {position:fixed}
-#att_misdirect_form {position:fixed}
-#att_phone {position:fixed;top:490}
+#att_cancel_form {position:fixed;top:30px}
+#att_delegate_form {position:fixed;top:30px}
+#att_misdirect_form {position:fixed;top:30px}
+#att_phone {position:fixed;top:490px}
 #att_phone_local {position:fixed;top:490px;left:218px}
 #att_dnrRenewDate {position:fixed;left:170px;top:165px}
 
