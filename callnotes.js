@@ -12,8 +12,8 @@ var redirectTabs = ["body_tab", "title_tab"];
 var attTabs = ["att_misdirect_tab", "att_delegate_tab", "att_cancel_tab"];
 var currentTabs;
 var tabPos = [-15, -30, -45, -60];
-var homeArrowPosition = 40;
-var escalateArrowPosition = 110;
+var homeArrowPosition = 41;
+var escalateArrowPosition = 113;
 var tierIIArrowPosition = 167;
 var redirectArrowPosition = 238;
 var attArrowPosition = 75;
@@ -64,7 +64,7 @@ function setBrowser() {
 
 // Displays notes form first - this could be modified if you want to show a different form first
 function init() {
-  getID("notes_tab").style.top = 8;
+  getID("notes_tab").style.top = "8px";
   hideAll("notes_tab");
   moveArrow(homeArrowPosition);
   showNotes();
@@ -83,7 +83,7 @@ function hideAll(tab) {
 
 // Moves the greater than sign to "position" pixels from the left side of the window
 function moveArrow(position) {
-  getID("arrow").style.left = position;
+  getID("arrow").style.left = position + "px";
 }
 
 // Causes the forms in the "tabs" array to descend from the top of the window
@@ -95,16 +95,16 @@ function startDescend(tabs, arrowPosition) {
 
 function descendTabs() {
   for (i = 0; i < currentTabs.length; i++) {
-				getID(currentTabs[i]).style.top = tabPos[i];
-				tabPos[i] += descendRate;
+    getID(currentTabs[i]).style.top = tabPos[i] + "px";
+    tabPos[i] += descendRate;
   }
 
   if (tabPos[currentTabs.length - 1] >= 9) {
-				clearTimeout(moveTabs);
-				resetTabPos();
+    clearTimeout(moveTabs);
+    resetTabPos();
   }
   else
-				moveTabs = setTimeout("descendTabs()", descendSpeed);
+    moveTabs = setTimeout("descendTabs()", descendSpeed);
 }
 
 // Resets the style.top pixel position to start off-screen for the next descendTabs()
@@ -113,7 +113,7 @@ function resetTabPos() {
 }
 function showTabs(tabs) {
   for (i = 0; i < tabs.length; i++)
-				getID(tabs[i]).style.display = "block";
+    getID(tabs[i]).style.display = "block";
 }
 
 // The moveForm... functions were used as part of an older version of my Tool. No functionality is lost without
@@ -125,7 +125,7 @@ function moveFormStart(form) {
 }
 function moveForm() {
   formPos += moveRate;
-  getID(currentForm).style.left = formPos;
+  getID(currentForm).style.left = formPos + "px";
 
   if (formPos >= 8) {
 				clearTimeout(formMove);
@@ -150,7 +150,7 @@ function moveFormHalves() {
 				}
 				else {
       leftPos += moveRate;
-      getID(currentLeft).style.left = leftPos;
+      getID(currentLeft).style.left = leftPos + "px";
 				}
   }
   if (rightContinue) {
@@ -160,7 +160,7 @@ function moveFormHalves() {
 				}
 				else {
       rightPos -= moveRate;
-      getID(currentRight).style.left = rightPos;
+      getID(currentRight).style.left = rightPos + "px";
 				}
   }
   if (!leftContinue && !rightContinue) {
@@ -190,13 +190,13 @@ function showNotes() {
 function showEscalate() {
   hideAll("escalate_tab");
   showTabs(escalateTabs);
-  getID("escalate_tab").style.top = 8;
+  getID("escalate_tab").style.top = "8px";
   startDescend(escalateTabs, escalateArrowPosition);
 }
 function showTierII() {
   showTabs(tierIITabs);
   getID("domreg_tab").style.display = "none";
-  getID("tierII_tab").style.top = 8;
+  getID("tierII_tab").style.top = "8px";
   getID("response_form").style.display = "none";
   getID("remedyURL").style.display = "none";
   getID("title").style.display = "none";
@@ -218,7 +218,7 @@ function showResponse() {
 }
 function showRedirect() {
   showTabs(redirectTabs);
-  getID("redirect_tab").style.top = 8;
+  getID("redirect_tab").style.top = "8px";
   getID("response_tab").style.display = "none";
   getID("title").style.display = "none";
   getID("title_form").style.display = "none";
@@ -237,7 +237,7 @@ function showTitle() {
 function showBody() {
   getID("title_tab").style.display = "none";
   getID("displayArea").style.display = "none";
-  getID("body_tab").style.top = 8;
+  getID("body_tab").style.top = "8px";
   getID("body_form").style.display = "block";
   getID("body_first").style.display = "block";
   getID("body_second").style.display = "block";
@@ -260,7 +260,7 @@ function showEmail() {
   getID("escalate_tab").style.display = "none";
   getID("notes_tab").style.display = "none";
   getID("att_tab").style.display = "none";
-  getID("email_tab").style.top = 8;
+  getID("email_tab").style.top = "8px";
   getID("email_form").elements[0].value = getID("notes_form").elements[0].value;	// puts notes.name into email.name
   showRemedyURL("emailChannel");
   //			moveFormHalvesStart("email_form",8,"remedyURL",190);
@@ -268,7 +268,7 @@ function showEmail() {
 function showATT() {
   hideAll("att_tab");
   showTabs(attTabs);
-  getID("att_tab").style.top = 8;
+  getID("att_tab").style.top = "8px";
   startDescend(attTabs, attArrowPosition);
 }
 function showATTMisdirect() {
@@ -277,7 +277,7 @@ function showATTMisdirect() {
   getID("displayArea").style.display = "none";
   getID("att_cancel_tab").style.display = "none";
   getID("att_delegate_tab").style.display = "none";
-  getID("att_misdirect_tab").style.top = 8;
+  getID("att_misdirect_tab").style.top = "8px";
   getID("att_misdirect_form").elements[0].value = getID("notes_form").elements[0].value;	// puts notes.name into misdirect.name
   getID("att_misdirect_form").elements[1].value = getID("notes_form").elements[1].value;	// puts notes.domain into misdirect.domain
   getID("local1").style.display = "block";
@@ -408,7 +408,7 @@ function showATTDelegate() {
   getID("displayArea").style.display = "none";
   getID("att_cancel_tab").style.display = "none";
   getID("att_misdirect_tab").style.display = "none";
-  getID("att_delegate_tab").style.top = 8;
+  getID("att_delegate_tab").style.top = "8px";
   getID("att_delegate_form").elements[0].value = getID("notes_form").elements[0].value;
   getID("att_delegate_form").elements[1].value = getID("notes_form").elements[4].value;
   getID("att_delegate_form").elements[4].value = getID("notes_form").elements[1].value;
@@ -516,8 +516,8 @@ function createEmail() {
 }
 function showRemedyURL(channel) {
   if (channel == "emailChannel") {
-				getID("remedyURL").style.top = 478;
-				getID("remedyURL").style.top = 121;
+				getID("remedyURL").style.top = "478px";
+				getID("remedyURL").style.top = "121px";
   }
 
   var type = getID(channel).selectedIndex;
@@ -675,12 +675,12 @@ function createDisplay() {
       rows++;
       getID("textDisplay").rows = rows;
       topCorner -= topDec;
-      getID("displayArea").style.top = topCorner;
+      getID("displayArea").style.top = topCorner + "px";
 
       if (displayDirection == "right")
         leftCorner -= 10;
 
-      getID("displayArea").style.left = leftCorner;
+      getID("displayArea").style.left = leftCorner + "px";
 				}
   }
   if (colsContinue) {

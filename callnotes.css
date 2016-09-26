@@ -20,7 +20,7 @@ a {color:white;text-decoration:none}
 
 #local3 {font-size:12px;color:red}
 
-#displayArea {position:fixed;top:200px}
+#displayArea {position:fixed;top:40px}
 
 #Caller {position:fixed;top:30px}
 #Domain {position:fixed;top:65px}
@@ -60,7 +60,7 @@ a {color:white;text-decoration:none}
 #att_phone_local {position:fixed;top:490px;left:218px}
 #att_dnrRenewDate {position:fixed;left:170px;top:165px}
 
-#arrow {position:fixed;top:8px}
+#arrow {position:fixed;top:8px;left:41px}
 #NewCase {position:fixed;top:8px;left:353px;font-size:14px}
 
 #notice {position:fixed;left:250px;top:675px;font-size:30px;display:none;color:red}
