@@ -516,16 +516,16 @@ function createEmail() {
 }
 function showRemedyURL(channel) {
   if (channel == "emailChannel") {
-				getID("remedyURL").style.top = "478px";
-				getID("remedyURL").style.top = "121px";
+    getID("remedyURL").style.top = "479px";
+    getID("remedyURL").style.left = "140px";
   }
 
   var type = getID(channel).selectedIndex;
 
   if (type == 0 || type == 1)
-				getID("remedyURL").style.display = "block";
+    getID("remedyURL").style.display = "block";
   else
-				getID("remedyURL").style.display = "none";
+    getID("remedyURL").style.display = "none";
 }
 function createATTMisdirect() {
   text = create("att_misdirect_form");
