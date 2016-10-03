@@ -53,39 +53,33 @@ var localReset;
 var localReseted = false;
 var localDiv;
 
-function setBrowser() {
+function init() {
   browser = navigator.userAgent;
   var chrome = /chrome/i;
-  if (chrome.test(browser))
-				init();
+  if (chrome.test(browser)) {
+    // Displays notes form first - this could be modified if you want to show a different form first
+    setTop("notes_tab");
+    hideAll("notes_tab");
+    moveArrow(homeArrowPosition);
+    showNotes();
+    //showNotice();
+  }
   else
-				getID("background").innerHTML = "you must use chrome, please.";
+    getID("background").innerHTML = "you must use chrome, please.";
 }
-
-// Displays notes form first - this could be modified if you want to show a different form first
-function init() {
-  getID("notes_tab").style.top = "8px";
-  hideAll("notes_tab");
-  moveArrow(homeArrowPosition);
-  showNotes();
-  //showNotice();
-}
-
 // Hides all tabs in the sections array except "tab"
 function hideAll(tab) {
-  for (i = 0; i < sections.length; i++) {
-				if (tab == sections[i])
+  for (var i=0; i<sections.length; i++) {
+    if (tab == sections[i])
       getID(sections[i]).style.display = "block";
-				else
+    else
       getID(sections[i]).style.display = "none";
   }
 }
-
 // Moves the greater than sign to "position" pixels from the left side of the window
 function moveArrow(position) {
   getID("arrow").style.left = position + "px";
 }
-
 // Causes the forms in the "tabs" array to descend from the top of the window
 function startDescend(tabs, arrowPosition) {
   moveArrow(arrowPosition);
@@ -94,7 +88,7 @@ function startDescend(tabs, arrowPosition) {
 }
 
 function descendTabs() {
-  for (i = 0; i < currentTabs.length; i++) {
+  for (var i=0; i<currentTabs.length; i++) {
     getID(currentTabs[i]).style.top = tabPos[i] + "px";
     tabPos[i] += descendRate;
   }
@@ -106,16 +100,10 @@ function descendTabs() {
   else
     moveTabs = setTimeout("descendTabs()", descendSpeed);
 }
-
 // Resets the style.top pixel position to start off-screen for the next descendTabs()
 function resetTabPos() {
   tabPos = [-15, -30, -45, -60];
 }
-function showTabs(tabs) {
-  for (i = 0; i < tabs.length; i++)
-    getID(tabs[i]).style.display = "block";
-}
-
 // The moveForm... functions were used as part of an older version of my Tool. No functionality is lost without
 // their utilization, only some eye candy. It works like descendTabs() but the whole forms are moved in horizontally
 // from either side of the window.
@@ -128,230 +116,198 @@ function moveForm() {
   getID(currentForm).style.left = formPos + "px";
 
   if (formPos >= 8) {
-				clearTimeout(formMove);
-				formPos = -170;
+    clearTimeout(formMove);
+    formPos = -170;
   }
   else
-				formMove = setTimeout("moveForm()", 1);
+    formMove = setTimeout("moveForm()", 1);
 }
 function moveFormHalvesStart(left, leftEnd, right, rightEnd) {
   currentLeft = left;
   leftStop = leftEnd;
   currentRight = right;
   rightStop = rightEnd;
-
   moveFormHalves();
 }
 function moveFormHalves() {
   if (leftContinue) {
-				if (leftPos >= leftStop) {
+    if (leftPos >= leftStop) {
       leftContinue = false;
       leftPos = -170;
-				}
-				else {
+    }
+    else {
       leftPos += moveRate;
       getID(currentLeft).style.left = leftPos + "px";
-				}
+    }
   }
   if (rightContinue) {
-				if (rightPos <= rightStop) {
+    if (rightPos <= rightStop) {
       rightContinue = false;
       rightPos = 500;
-				}
-				else {
+    }
+    else {
       rightPos -= moveRate;
       getID(currentRight).style.left = rightPos + "px";
-				}
+    }
   }
   if (!leftContinue && !rightContinue) {
-				clearTimeout(formMove);
-				leftContinue = true;
-				rightContinue = true;
+    clearTimeout(formMove);
+    leftContinue = true;
+    rightContinue = true;
   }
   else
-				formMove = setTimeout("moveFormHalves()", 1);
+    formMove = setTimeout("moveFormHalves()", 1);
 }
 function showHome() {
   hideAll("home");
-  showTabs(homeTabs);
+  showIDs(homeTabs);
   startDescend(homeTabs, homeArrowPosition);
 }
 function showNotes() {
-  getID("notes_form").style.display = "block";
-  getID("notes_first").style.display = "block";
-  getID("notes_second").style.display = "block";
-  getID("displayArea").style.display = "none";
-  getID("escalate_tab").style.display = "none";
-  getID("email_tab").style.display = "none";
-  getID("att_tab").style.display = "none";
+  showIDs(["notes_form", "notes_first", "notes_second"]);
+  hideIDs(["displayArea", "escalate_tab", "email_tab", "att_tab"]);
   //moveFormHalvesStart("notes_first",8,"notes_second",164);
   getID("notes_form").elements[0].focus();
 }
 function showEscalate() {
   hideAll("escalate_tab");
-  showTabs(escalateTabs);
-  getID("escalate_tab").style.top = "8px";
+  showIDs(escalateTabs);
+  setTop("escalate_tab");
   startDescend(escalateTabs, escalateArrowPosition);
 }
 function showTierII() {
-  showTabs(tierIITabs);
-  getID("domreg_tab").style.display = "none";
-  getID("tierII_tab").style.top = "8px";
-  getID("response_form").style.display = "none";
-  getID("remedyURL").style.display = "none";
-  getID("title").style.display = "none";
-  getID("title_form").style.display = "none";
-  getID("title_tab").style.display = "none";
-  getID("body_form").style.display = "none";
-  getID("body_tab").style.display = "none";
-  getID("displayArea").style.display = "none";
+  showIDs(tierIITabs);
+  hideIDs(["domreg_tab", "response_form", "remedyURL", "title", "title_form", 
+           "title_tab", "body_form", "body_tab", "displayArea"]);
+  setTop("tierII_tab");
   startDescend(tierIITabs, tierIIArrowPosition);
 }
 function showResponse() {
-  getID("response_form").style.display = "block";
-  getID("displayArea").style.display = "none";
-  getID("redirect_tab").style.display = "none";
-  getID("response_form").elements[0].value = getID("notes_form").elements[0].value;	// puts notes.name into response.name
-  getID("response_form").elements[2].value = getID("notes_form").elements[3].value;	// puts notes.case into response.case
+  showIDs(["response_form"]);
+  hideIDs(["displayArea", "redirect_tab"]);
+  setValue("response_form", 0, getID("notes_form").elements[0].value); //puts notes.name into response.name
+  setValue("response_form", 2, getID("notes_form").elements[3].value); //puts notes.case into response.case
   showRemedyURL("responseChannel");
-  //			moveFormHalvesStart("response_form",8,"remedyURL",190);
+  //moveFormHalvesStart("response_form",8,"remedyURL",190);
 }
 function showRedirect() {
-  showTabs(redirectTabs);
-  getID("redirect_tab").style.top = "8px";
-  getID("response_tab").style.display = "none";
-  getID("title").style.display = "none";
-  getID("title_form").style.display = "none";
-  getID("body_form").style.display = "none";
-  getID("displayArea").style.display = "none";
+  showIDs(redirectTabs);
+  setTop("redirect_tab");
+  hideIDs(["response_tab", "title", "title_form", "body_form", "displayArea"]);
   startDescend(redirectTabs, redirectArrowPosition);
 }
 function showTitle() {
-  getID("title_form").style.display = "block";
-  getID("body_tab").style.display = "none";
-  getID("body_form").style.display = "none";
-  getID("title").style.display = "none";
-  getID("title_form").elements[3].value = getID("notes_form").elements[2].value;	// puts notes.userid into title.userid
-  //			moveFormStart("title_form");
+  showIDs(["title_form"]);
+  hideIDs(["body_tab", "body_form", "title"]);
+  setValue("title_form", 3, getID("notes_form").elements[2].value); //puts notes.userid into title.userid
+  //moveFormStart("title_form");
 }
 function showBody() {
-  getID("title_tab").style.display = "none";
-  getID("displayArea").style.display = "none";
-  getID("body_tab").style.top = "8px";
-  getID("body_form").style.display = "block";
-  getID("body_first").style.display = "block";
-  getID("body_second").style.display = "block";
-  getID("body_form").elements[0].value = getID("notes_form").elements[8].value;	// puts notes.sinfo into body.sinfo
-  getID("body_form").elements[3].value = getID("notes_form").elements[6].value;	// puts notes.authenticated into body.authenticated
-  //			moveFormHalvesStart("body_first",8,"body_second",190);
+  hideIDs(["title_tab", "displayArea"]);
+  setTop("body_tab");
+  showIDs(["body_form", "body_first", "body_second"]);
+  setValue("body_form", 0, getID("notes_form").elements[8].value); //puts notes.sinfo into body.sinfo
+  setValue("body_form", 3, getID("notes_form").elements[6].value); //puts notes.authenticated into body.authenticated
+  //moveFormHalvesStart("body_first",8,"body_second",190);
 }
 function showDomreg() {
-  getID("domreg_form").style.display = "block";
-  getID("displayArea").style.display = "none";
-  getID("tierII_tab").style.display = "none";
-  getID("domreg_form").elements[0].value = getID("notes_form").elements[1].value;	// puts notes.domain into domreg.domain
-  getID("domreg_form").elements[1].value = getID("notes_form").elements[2].value;	// puts notes.userid into domreg.groupuserid
-  getID("domreg_form").elements[4].value = getID("notes_form").elements[6].value;	// puts notes.authenticated into domreg.authenticated
-  //			moveFormStart("domreg_form");
+  showIDs(["domreg_form"]);
+  hideIDs(["displayArea", "tierII_tab"]);
+  setValue("domreg_form", 0, ("notes_form").elements[1].value);	//puts notes.domain into domreg.domain
+  setValue("domreg_form", 1, getID("notes_form").elements[2].value); //puts notes.userid into domreg.groupuserid
+  setValue("domreg_form", 4, getID("notes_form").elements[6].value); //puts notes.authenticated into domreg.authenticated
+  //moveFormStart("domreg_form");
 }
 function showEmail() {
-  getID("email_form").style.display = "block";
-  getID("displayArea").style.display = "none";
-  getID("escalate_tab").style.display = "none";
-  getID("notes_tab").style.display = "none";
-  getID("att_tab").style.display = "none";
-  getID("email_tab").style.top = "8px";
-  getID("email_form").elements[0].value = getID("notes_form").elements[0].value;	// puts notes.name into email.name
+  showIDs(["email_form"]);
+  hideIDs(["displayArea", "escalate_tab", "notes_tab", "att_tab"]);
+  setTop("email_tab");
+  setValue("email_form", 0, getID("notes_form").elements[0].value); // puts notes.name into email.name
   showRemedyURL("emailChannel");
-  //			moveFormHalvesStart("email_form",8,"remedyURL",190);
+  //moveFormHalvesStart("email_form",8,"remedyURL",190);
 }
 function showATT() {
   hideAll("att_tab");
-  showTabs(attTabs);
-  getID("att_tab").style.top = "8px";
+  showIDs(attTabs);
+  setTop("att_tab");
   startDescend(attTabs, attArrowPosition);
 }
 function showATTMisdirect() {
-  getID("att_misdirect_form").style.display = "block";
-  getID("att_phone").style.display = "block";
-  getID("displayArea").style.display = "none";
-  getID("att_cancel_tab").style.display = "none";
-  getID("att_delegate_tab").style.display = "none";
-  getID("att_misdirect_tab").style.top = "8px";
-  getID("att_misdirect_form").elements[0].value = getID("notes_form").elements[0].value;	// puts notes.name into misdirect.name
-  getID("att_misdirect_form").elements[1].value = getID("notes_form").elements[1].value;	// puts notes.domain into misdirect.domain
-  getID("local1").style.display = "block";
-  getID("local3").style.display = "none";
-  //			moveFormHalvesStart("att_misdirect_form",8,"att_phone",180);
+  showIDs(["att_misdirect_form", "att_phone", "local1"]);
+  hideIDs(["displayArea", "att_cancel_tab", "att_delegate_tab", "local3"]);
+  setTop("att_misdirect_tab");
+  setValue("att_misdirect_form", 0, getID("notes_form").elements[0].value); // puts notes.name into misdirect.name
+  setValue("att_misdirect_form", 1, getID("notes_form").elements[1].value); // puts notes.domain into misdirect.domain
+  //moveFormHalvesStart("att_misdirect_form",8,"att_phone",180);
 }
 function selectLocalPhone(type) {
   state = getID("att_select_state").options[getID("att_select_state").selectedIndex].value;
   if (state == "Select State") {
-				localDiv = "local3";
-				mustSelectLocal();
+    localDiv = "local3";
+    mustSelectLocal();
   }
   else
-				selectNumber(type);
+    selectNumber(type);
 }
 function selectNumber(type) {
   var numberFound;
   switch (state) {
-				case "Arkansas":
+    case "Arkansas":
       if (type == "Residential")
         numberFound = "800-464-7928";
       else
         numberFound = "800-499-7928";
       break;
-				case "California":
+    case "California":
       if (type == "Residential")
         numberFound = "800-310-2355";
       else
         numberFound = "800-750-2355";
       break;
-				case "Connecticut":
+    case "Connecticut":
       if (type == "Residential")
         numberFound = "800-453-7368";
       else
         numberFound = "800-648-3920";
       break;
-				case "Illinois":
+    case "Illinois":
       numberFound = "800-244-4444";
       break;
-				case "Indiana":
+    case "Indiana":
       if (type == "Residential")
         numberFound = "800-742-8771";
       else
         numberFound = "800-321-2000";
       break;
-				case "Michigan":
+    case "Michigan":
       if (type == "Residential")
         numberFound = "800-244-4444";
       else
         numberFound = "800-321-2000";
       break;
-				case "Missouri": case "Kansas": case "Oklahoma": case "Texas":
+    case "Missouri": case "Kansas": case "Oklahoma": case "Texas":
       if (type == "Residential")
         numberFound = "800-585-7928";
       else
         numberFound = "800-559-7928";
       break;
-				case "Ohio":
+    case "Ohio":
       if (type == "Residential")
         numberFound = "800-660-1000";
       else
         numberFound = "800-321-2000";
       break;
-				case "Wisconsin":
+    case "Wisconsin":
       if (type == "Residential")
         numberFound = "800-924-1000";
       else
         numberFound = "800-321-2000";
       break;
-				case "Nevada":
+    case "Nevada":
       numberFound = "877-469-2355";
       break;
-				case "Alabama": case "Florida": case "Georgia": case "Kentucky": case "Louisiana":
-				case "Mississippi": case "North Carolina": case "South Carolina": case "Tennessee":
+    case "Alabama": case "Florida": case "Georgia": case "Kentucky": case "Louisiana":
+    case "Mississippi": case "North Carolina": case "South Carolina": case "Tennessee":
       if (type == "Residential")
         numberFound = "866-805-3921";
       else
@@ -359,77 +315,70 @@ function selectNumber(type) {
       break;
 				default:
   }
-  getID("att_misdirect_form").elements[4].value = numberFound;
-  getID("att_misdirect_form").elements[5].value = state;
+  setValue("att_misdirect_form", 4, numberFound);
+  setValue("att_misdirect_form", 5, state);
 }
 function mustSelectLocal() {
-  getID("local1").style.display = "none";
-  getID(localDiv).style.display = "block";
+  hideIDs(["local1"]);
+  showIDs([localDiv]);
   mustSelectLocalReset();
 }
 function mustSelectLocalReset() {
   if (!localReseted) {
-				localReseted = true;
-				localReset = setTimeout("mustSelectLocalReset()", 825);
+    localReseted = true;
+    localReset = setTimeout("mustSelectLocalReset()", 825);
   }
   else {
-				localReseted = false;
-				clearTimeout(localReset);
-				getID("local1").style.display = "block";
-				getID(localDiv).style.display = "none";
+    localReseted = false;
+    clearTimeout(localReset);
+    showIDs(["local1"]);
+    hideIDs([localDiv]);
   }
 }
 function putPhone(product, number) {
-  getID("att_misdirect_form").elements[2].value = product;
-  getID("att_misdirect_form").elements[4].value = number;
-
+  setValue("att_misdirect_form", 2, product);
+  setValue("att_misdirect_form", 4, number);
   if (getID("att_misdirect_form").elements[1].value == "")
-				getID("att_misdirect_form").elements[1].value = product;
+    setValue("att_misdirect_form", 1, product);
 }
 function showATTCancel() {
-  getID("att_cancel_form").style.display = "block";
-  getID("displayArea").style.display = "none";
-  getID("att_misdirect_tab").style.display = "none";
-  getID("att_delegate_tab").style.display = "none";
-  getID("att_dnrRenewDate").style.display = "none";
-  getID("att_cancel_form").elements[0].value = getID("notes_form").elements[0].value;	// puts notes.name into misdirect.name
-  getID("att_cancel_form").elements[1].value = "canceling hosting";
-  getID("att_cancel_form").elements[2].value = getID("notes_form").elements[1].value;	// puts notes.domain inot misdirect.domain
+  showIDs(["att_cancel_form"]);
+  hideIDs(["displayArea", "att_misdirect_tab", "att_delegate_tab", "att_dnrRenewDate", ])
+  setValue("att_cancel_form", 0, getID("notes_form").elements[0].value); // puts notes.name into misdirect.name
+  setValue("att_cancel_form", 1, "canceling hosting");
+  setValue("att_cancel_form", 2, getID("notes_form").elements[1].value); // puts notes.domain inot misdirect.domain
 
   var date = new Date();
-  getID("att_cancel_form").elements[3].value = date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
-
+  setValue("att_cancel_form", 3, date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear());
   showDNRRenewDate();
   showHostingRenewDate();
-  //			moveFormStart("att_cancel_form");
+  //moveFormStart("att_cancel_form");
 }
 function showATTDelegate() {
-  getID("att_delegate_form").style.display = "block";
-  getID("displayArea").style.display = "none";
-  getID("att_cancel_tab").style.display = "none";
-  getID("att_misdirect_tab").style.display = "none";
-  getID("att_delegate_tab").style.top = "8px";
-  getID("att_delegate_form").elements[0].value = getID("notes_form").elements[0].value;
-  getID("att_delegate_form").elements[1].value = getID("notes_form").elements[4].value;
-  getID("att_delegate_form").elements[4].value = getID("notes_form").elements[1].value;
-  //			moveFormHalvesStart("att_delegate_form",8,"att_delegate_last",170);
+  showIDs(["att_delegate_form"]);
+  hideIDs(["displayArea", "att_cancel_tab", "att_misdirect_tab"])
+  setTop("att_delegate_tab");
+  setValue("att_delegate_form", 0, getID("notes_form").elements[0].value);
+  setValue("att_delegate_form", 1, getID("notes_form").elements[4].value);
+  setValue("att_delegate_form", 4, getID("notes_form").elements[1].value);
+  //moveFormHalvesStart("att_delegate_form",8,"att_delegate_last",170);
 }
 function createNotes() {
   var text = "";
   var notes = getID("notes_form");
-  text += notes.elements[0].name + " " + notes.elements[0].value + "\n";
-  text += notes.elements[1].name + " " + notes.elements[1].value + "\n";
-  text += notes.elements[2].name + " " + notes.elements[2].value + "\n";
+  text += getValue(notes, 0, " ", "\n");
+  text += getValue(notes, 1, " ", "\n");
+  text += getValue(notes, 2, " ", "\n");
   if (notes.elements[3].value != "")
-				text += notes.elements[3].name + " " + notes.elements[3].value + "\n";
-  text += notes.elements[4].name + " " + notes.elements[4].value + "\n";
-  text += notes.elements[5].name + " " + notes.elements[5].value + "\n";
-  text += notes.elements[6].name + " " + notes.elements[6].value + "\n\n";
-  text += notes.elements[7].name + "\n" + notes.elements[7].value + "\n\n";
-  text += notes.elements[8].name + "\n" + notes.elements[8].value + "\n\n";
-  text += notes.elements[9].name + "\n" + notes.elements[9].value + "\n\n";
-  text += notes.elements[10].name + "\n" + notes.elements[10].value + "\n\n";
-  text += notes.elements[11].name + "\n" + notes.elements[11].value;
+    text += getValue(notes, 3, " ", "\n");
+  text += getValue(notes, 4, " ", "\n");
+  text += getValue(notes, 5, " ", "\n");
+  text += getValue(notes, 6, " ", "\n\n");
+  text += getValue(notes, 7, "\n", "\n\n");
+  text += getValue(notes, 8, "\n", "\n\n");
+  text += getValue(notes, 9, "\n", "\n\n");
+  text += getValue(notes, 10, "\n", "\n\n");
+  text += getValue(notes, 11, "\n", "");
 
   displayForm("notes_form", text, "left", true);
 }
@@ -438,10 +387,10 @@ function createResponse() {
   setChannel(getID("responseChannel").selectedIndex);
 
   if (getID("remedyURL").elements[2].checked) {
-				var incident = getID("remedyURL").elements[0].value;
-				var userID = getID("remedyURL").elements[1].value;
+    var incident = getID("remedyURL").elements[0].value;
+    var userID = getID("remedyURL").elements[1].value;
 
-				channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident +
+    channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident +
       "&acctid=" + userID + "\n(888)663-6648\n\nVisit our support site at http://support.verio.com";
   }
 
@@ -478,28 +427,25 @@ function createTitle() {
   var platform = form.elements[4].value;
   var description = form.elements[5].value;
   var title = "Pri " + priority + " = (Imp " + sevValue + " + Urg " + urgValue + ") - " + platform + " - " + server + ", " + userid + " - " + description;
-  getID("title_form").style.display = "none";
-  getID("title").elements[0].value = title;
-  getID("title").style.display = "block";
+  hideIDs(["title_form"]);
+  setValue("title", 0, title);
+  showIDs(["title"]);
   getID("title").elements[0].select();
 }
 function createBody() {
-  text = create("body_form");
-  displayForm("body_form", text, "left", true);
+  displayForm("body_form", create("body_form"), "left", true);
 }
 function createDomreg() {
-  text = create("domreg_form");
-  displayForm("domreg_form", text, "left", true);
+  displayForm("domreg_form", create("domreg_form"), "left", true);
 }
 function createEmail() {
   getID("remedyURL").style.display = "none";
   setChannel(getID("emailChannel").selectedIndex);
 
   if (getID("remedyURL").elements[2].checked) {
-				var incident = getID("remedyURL").elements[0].value;
-				var userID = getID("remedyURL").elements[1].value;
-
-				channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident +
+    var incident = getID("remedyURL").elements[0].value;
+    var userID = getID("remedyURL").elements[1].value;
+    channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident +
       "&acctid=" + userID + "\n(888)663-6648\n\nVisit our support site at http://support.verio.com";
   }
 
@@ -712,6 +658,23 @@ function clear(tab) {
 function getID(div) {
   return document.getElementById(div);
 }
+function hideIDs(list) {
+  for (var i=0; i<list.length; i++)
+    getID(list[i]).style.display = "none";
+}
+function showIDs(list) {
+  for (var i=0; i<list.length; i++)
+    getID(list[i]).style.display = "block";
+}
+function setTop(id) {
+  getID(id).style.top = "8px";
+}
+function setValue(id, el, val) {
+  getID(id).elements[el].value = val;
+}
+function getValue(id, el, sep1, sep2) {
+  return id.elements[el].name + sep1 + id.elements[el].value + sep2;
+}
 // I'm most proud of this feature. It's most useful and it was fun to write. If you want to change the color,
 // just change backgroundColor and alertColor to your preference where the variables are initialized.
 function holdStart() {
@@ -721,19 +684,19 @@ function holdStart() {
 }
 function holdCount() {
   if (!holdOn) {
-				if (seconds == 60) {
+    if (seconds == 60) {
       minutes++;
       if (minutes == 2)
         alertStart();
       seconds = 0;
-				}
-				if (seconds < 10)
+    }
+    if (seconds < 10)
       getID("time").innerHTML = minutes + ":0" + seconds;
-				else
+    else
       getID("time").innerHTML = minutes + ":" + seconds;
-				seconds++;
+    seconds++;
 
-				hold = setTimeout("holdCount()", 1000);
+    hold = setTimeout("holdCount()", 1000);
   }
 }
 function stop() {
@@ -750,12 +713,12 @@ function stop() {
 }
 function alertStart() {
   if (black) {
-				getID("background").style.backgroundColor = alertColor;
-				black = false;
+    getID("background").style.backgroundColor = alertColor;
+    black = false;
   }
   else {
-				getID("background").style.backgroundColor = backgroundColor;
-				black = true;
+    getID("background").style.backgroundColor = backgroundColor;
+    black = true;
   }
   alert = setTimeout("alertStart()", 500);
 }
@@ -765,16 +728,16 @@ var noticeCount = 0;
 
 function showNotice() {
   if (noticeBlock) {
-				getID("notice").style.display = "none";
-				noticeBlock = false;
+    getID("notice").style.display = "none";
+    noticeBlock = false;
   }
   else {
-				getID("notice").style.display = "block";
-				noticeBlock = true;
+    getID("notice").style.display = "block";
+    noticeBlock = true;
   }
 
   if (noticeCount++ == 120)
-				getID("background").innerHTML = "Why do you refuse to click on notice?";
+    getID("background").innerHTML = "Why do you refuse to click on notice?";
 
   notice = setTimeout("showNotice()", 500);
 }
