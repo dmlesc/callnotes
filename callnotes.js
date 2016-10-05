@@ -1,4 +1,3 @@
-
 var sections = ["notes_tab", "notes_first", "notes_second", "escalate_tab", "response_tab",
   "response_form", "redirect_tab", "title_tab", "title_form", "title",
   "body_tab", "body_first", "body_second", "email_tab", "email_form", "remedyURL",
@@ -54,9 +53,8 @@ var localReseted = false;
 var localDiv;
 
 function init() {
-  browser = navigator.userAgent;
   var chrome = /chrome/i;
-  if (chrome.test(browser)) {
+  if (chrome.test(navigator.userAgent)) {
     // Displays notes form first - this could be modified if you want to show a different form first
     setTop("notes_tab");
     hideAll("notes_tab");
@@ -92,7 +90,6 @@ function descendTabs() {
     getID(currentTabs[i]).style.top = tabPos[i] + "px";
     tabPos[i] += descendRate;
   }
-
   if (tabPos[currentTabs.length - 1] >= 9) {
     clearTimeout(moveTabs);
     resetTabPos();
@@ -347,7 +344,6 @@ function showATTCancel() {
   setValue("att_cancel_form", 0, getID("notes_form").elements[0].value); // puts notes.name into misdirect.name
   setValue("att_cancel_form", 1, "canceling hosting");
   setValue("att_cancel_form", 2, getID("notes_form").elements[1].value); // puts notes.domain inot misdirect.domain
-
   var date = new Date();
   setValue("att_cancel_form", 3, date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear());
   showDNRRenewDate();
@@ -379,21 +375,17 @@ function createNotes() {
   text += getValue(notes, 9, "\n", "\n\n");
   text += getValue(notes, 10, "\n", "\n\n");
   text += getValue(notes, 11, "\n", "");
-
   displayForm("notes_form", text, "left", true);
 }
 function createResponse() {
   getID("remedyURL").style.display = "none";
   setChannel(getID("responseChannel").selectedIndex);
-
   if (getID("remedyURL").elements[2].checked) {
     var incident = getID("remedyURL").elements[0].value;
     var userID = getID("remedyURL").elements[1].value;
-
     channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident +
       "&acctid=" + userID + "\n(888)663-6648\n\nVisit our support site at http://support.verio.com";
   }
-
   var form = getID("response_form");
   var response = "Hello " + form.elements[0].value + ",\n\n" +
     "Thank you for contacting " + channelName + " Web Hosting Customer Care.\n\n" +
@@ -412,7 +404,6 @@ function createResponse() {
     form.elements[2].value + "\n\n" +
     "Let us know if you have any questions or need additional assistance.\n\n" +
     "Regards,\n\n" + form.elements[3].value + "\n" + channelInfo;
-
   displayForm("response_form", response);
 }
 function createTitle() {
@@ -441,14 +432,12 @@ function createDomreg() {
 function createEmail() {
   getID("remedyURL").style.display = "none";
   setChannel(getID("emailChannel").selectedIndex);
-
   if (getID("remedyURL").elements[2].checked) {
     var incident = getID("remedyURL").elements[0].value;
     var userID = getID("remedyURL").elements[1].value;
     channelInfo = "Verio Customer Care\nhttps://support.verio.com/remedy/?incid=" + incident +
       "&acctid=" + userID + "\n(888)663-6648\n\nVisit our support site at http://support.verio.com";
   }
-
   var form = getID("email_form");
   var email = "Hello " + form.elements[0].value + ",\n\n" +
     "Thank you for contacting " + channelName + " Web Hosting Customer Care. " +
@@ -457,7 +446,6 @@ function createEmail() {
     form.elements[2].value + "\n\n" +
     "If you have any questions or concerns, please let us know. We are here 24 hours 7 days a week.\n\n" +
     "Kind regards,\n\n" + form.elements[3].value + "\n" + channelInfo;
-
   displayForm("email_form", email, "left", true);
 }
 function showRemedyURL(channel) {
@@ -465,18 +453,15 @@ function showRemedyURL(channel) {
     getID("remedyURL").style.top = "479px";
     getID("remedyURL").style.left = "140px";
   }
-
   var type = getID(channel).selectedIndex;
-
   if (type == 0 || type == 1)
-    getID("remedyURL").style.display = "block";
+    showIDs(["remedyURL"]);
   else
-    getID("remedyURL").style.display = "none";
+    hideIDs(["remedyURL"]);
 }
 function createATTMisdirect() {
-  text = create("att_misdirect_form");
-  getID("att_phone").style.display = "none";
-  displayForm("att_misdirect_form", text, "left", true);
+  hideIDs(["att_phone"]);
+  displayForm("att_misdirect_form", create("att_misdirect_form"), "left", true);
 }
 function createATTCancel() {
   var form = getID("att_cancel_form");
@@ -486,44 +471,39 @@ function createATTCancel() {
     "We regret any inconvenience you might have experienced with this issue. " +
     "In response to your request, the web hosting account for " +
     form.elements[2].value + " has been canceled effective " + form.elements[3].value + ".\n\n";
-
   var type = getID("att_CancelType").selectedIndex;
-
   if (type == 0)
-				;
+    ;
   else if (type == 1) {
-				text += "Our records show that you also have the domain registration product on this account." +
-						"Therefore with the web hosting canceled, your account will be downgraded and remain active " +
-						"as a domain registration only account.\n\nIf you do not wish to keep the domain registration, " +
-						"please reply to this email authorizing us not to renew it (non-renew).\n\n";
+    text += "Our records show that you also have the domain registration product on this account." +
+            "Therefore with the web hosting canceled, your account will be downgraded and remain active " +
+            "as a domain registration only account.\n\nIf you do not wish to keep the domain registration, " +
+            "please reply to this email authorizing us not to renew it (non-renew).\n\n";
   }
   else {
-				text += "In addition, the Domain Name Registration has also been set to not renew at the next renewal date " +
-      form.elements[5].value + ".\n\n";
+    text += "In addition, the Domain Name Registration has also been set to not renew at the next renewal date " +
+    form.elements[5].value + ".\n\n";
   }
-
   var refund = getID("att_CancelRefund").selectedIndex;
-
   if (refund == 0)
-				text += "If a refund is due, you will receive it within 60-90 days. ";
+    text += "If a refund is due, you will receive it within 60-90 days. ";
   else if (refund == 1) {
-				text += "Please be advised that your request is past the " + form.elements[7].value +
+    text += "Please be advised that your request is past the " + form.elements[7].value +
 						" renewal date, therefore no refund will be issued for this cancelation. " +
 						"If your payment method is Billing Telephone Number (BTN), this last charge was " +
 						"already exported to your local telephone office and it may take 60-90 days " +
 						"to be reflected on your phone bill statement.\n\n";
   }
   else {
-				text += "Please be advised that the cancelation falls within the first 30 days of service. " +
+    text += "Please be advised that the cancelation falls within the first 30 days of service. " +
 						"Therefore you will be given a full refund, excluding mandatory setup fees, ala carte " +
 						"items and applicable domain registration fees. If your payment method is Billing Telephone " +
 						"Number (BTN), it may take 60-90 days for this change to be reflected on your phone bill statement.";
   }
 
   text += "To view AT&T web hosting refund policy, please visit:\n\nhttp://webhosting.att.com/Terms-Conditions.aspx\n\n" +
-    "We apologize for any inconvenience and thank you for choosing AT&T Web Hosting.\n\n" +
-    form.elements[8].value + "\n" + att;
-
+          "We apologize for any inconvenience and thank you for choosing AT&T Web Hosting.\n\n" +
+  form.elements[8].value + "\n" + att;
   displayForm("att_cancel_form", text);
 }
 function createATTDelegate() {
@@ -532,40 +512,38 @@ function createATTDelegate() {
 }
 function showDNRRenewDate() {
   var type = getID("att_CancelType").selectedIndex;
-
   if (type == 2)
-				getID("att_dnrRenewDate").style.display = "block";
+    showIDs(["att_dnrRenewDate"]);
   else
-				getID("att_dnrRenewDate").style.display = "none";
+    hideIDs(["att_dnrRenewDate"]);
 }
 function showHostingRenewDate() {
   var type = getID("att_CancelRefund").selectedIndex;
-
   if (type == 1)
-				getID("att_hostingRenewDate").style.display = "block";
+    showIDs(["att_hostingRenewDate"]);
   else
-				getID("att_hostingRenewDate").style.display = "none";
+    hideIDs(["att_hostingRenewDate"]);
 }
 function setChannel(index) {
   if (index == 0) {
-				channelName = "Verio";
-				channelInfo = verioAutobahn;
+    channelName = "Verio";
+		channelInfo = verioAutobahn;
   }
   else if (index == 1) {
-				channelName = "Verio";
-				channelInfo = verioNimbus;
+    channelName = "Verio";
+    channelInfo = verioNimbus;
   }
   else if (index == 2) {
-				channelName = "Rapidsite";
-				channelInfo = rapidsite;
+    channelName = "Rapidsite";
+    channelInfo = rapidsite;
   }
   else if (index == 3) {
-				channelName = "viaVerio";
-				channelInfo = viaVerio;
+    channelName = "viaVerio";
+    channelInfo = viaVerio;
   }
   else {
-				channelName = "AT&T";
-				channelInfo = att;
+    channelName = "AT&T";
+    channelInfo = att;
   }
 }
 function create(tab) {
@@ -573,17 +551,16 @@ function create(tab) {
   var form = getID(tab);
   var att_form = /att_/;
   var att = att_form.test(tab);
-
   for (var i = 0; i < form.length; i++) {
-				var contents = form.elements[i].value;
-				if (contents != "") {
+    var contents = form.elements[i].value;
+    if (contents != "") {
       text += form.elements[i].name;
       if (att)
         text += " ";
       else
         text += "\n";
       text += contents + "\n\n";
-				}
+    }
   }
   return text;
 }
@@ -591,70 +568,63 @@ function create(tab) {
 // and error to get the numbers right. I wrote it awhile ago and I forget exactly how it 
 // works and I don't feel like going back and figuring it out again to be able to explain it clearly.
 function displayForm(form, text, direction, large) {
-  getID(form).style.display = "none"
-  getID("displayArea").style.display = "block";
-  getID("displayArea").elements[0].value = text;
+  hideIDs([form]);
+  showIDs(["displayArea"]);
+  setValue("displayArea", 0, text);
   getID("displayArea").elements[0].select();
-
   displayDirection = direction;
-
   if (large) {
-				topCorner = 675;
-				rowsAmount = 50;
-				topDec = 13;
+    topCorner = 675;
+    rowsAmount = 50;
+    topDec = 13;
   }
   else {
-				topCorner = 255;
-				rowsAmount = 23;
-				topDec = 10;
+    topCorner = 255;
+    rowsAmount = 23;
+    topDec = 10;
   }
-
   createDisplay();
 }
 function createDisplay() {
   if (rowsContinue) {
-				if (rows == rowsAmount) {
+    if (rows == rowsAmount) {
       rowsContinue = false;
       rows = 0;
-				}
-				else {
+    }
+    else {
       rows++;
       getID("textDisplay").rows = rows;
       topCorner -= topDec;
       getID("displayArea").style.top = topCorner + "px";
-
       if (displayDirection == "right")
         leftCorner -= 10;
-
       getID("displayArea").style.left = leftCorner + "px";
-				}
+    }
   }
   if (colsContinue) {
-				if (cols == 48) {
+    if (cols == 48) {
       colsContinue = false;
       cols = 0;
-				}
-				else {
+    }
+    else {
       cols += 2;
       getID("textDisplay").cols = cols;
-				}
+    }
   }
-
   if (!rowsContinue && !colsContinue) {
-				clearTimeout(displayEnlarge);
-				rowsContinue = true;
-				colsContinue = true;
+    clearTimeout(displayEnlarge);
+    rowsContinue = true;
+    colsContinue = true;
   }
   else
-				displayEnlarge = setTimeout("createDisplay()", 15);
+    displayEnlarge = setTimeout("createDisplay()", 15);
 }
 function clear(tab) {
   var form = document.getElementById(tab + "_form");
   for (var i = 0; i < form.length; i++)
-				form.elements[i].value = "";
+    form.elements[i].value = "";
 }
-// This function is so the code looks nicer and takes less time to write. It's annoying to have to write out
-// document.getElementById() every time you want to get an element.
+// These are some helper functions.
 function getID(div) {
   return document.getElementById(div);
 }
@@ -678,8 +648,8 @@ function getValue(id, el, sep1, sep2) {
 // I'm most proud of this feature. It's most useful and it was fun to write. If you want to change the color,
 // just change backgroundColor and alertColor to your preference where the variables are initialized.
 function holdStart() {
-  getID("hold").style.display = "none";
-  getID("stop").style.display = "block";
+  hideIDs(["hold"]);
+  showIDs(["stop"]);
   holdCount();
 }
 function holdCount() {
@@ -695,7 +665,6 @@ function holdCount() {
     else
       getID("time").innerHTML = minutes + ":" + seconds;
     seconds++;
-
     hold = setTimeout("holdCount()", 1000);
   }
 }
@@ -707,8 +676,8 @@ function stop() {
   seconds = 0;
   minutes = 0;
   getID("background").style.backgroundColor = backgroundColor;
-  getID("hold").style.display = "block";
-  getID("stop").style.display = "none";
+  showIDs(["hold"]);
+  hideIDs(["stop"]);
   getID("time").innerHTML = "";
 }
 function alertStart() {
@@ -728,17 +697,15 @@ var noticeCount = 0;
 
 function showNotice() {
   if (noticeBlock) {
-    getID("notice").style.display = "none";
+    hideIDs(["notice"]);
     noticeBlock = false;
   }
   else {
-    getID("notice").style.display = "block";
+    showIDs(["notice"]);
     noticeBlock = true;
   }
-
   if (noticeCount++ == 120)
     getID("background").innerHTML = "Why do you refuse to click on notice?";
-
   notice = setTimeout("showNotice()", 500);
 }
 function displayNotice() {
