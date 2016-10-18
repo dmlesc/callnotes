@@ -3,9 +3,13 @@
 I made this tool I was working tech support at a webhosting company. Others had 
 made tools but I made this one to fit my needs and style. If you don't like my 
 style, feel free to change the colors (or anything else) to whatever you like. 
+This was the first real project that I did outside of school and I learned a lot
+doing it. It was before I even knew what a framework was or I even knew of my 
+aversion to frameworks, so all the Javascript is original. 
 
 It's only been fully tested in Chrome becasue I think it looks better and it has 
-faster Javascript processing (the animations are smoother) than other browsers. 
+faster Javascript processing (the animations are smoother) than other browsers.  
+
 If you don't see the "hold" link at the bottom of the page, you have to disable 
 the Bookmarks toolbar, the Menu bar, or the status bar. It's advisable to do 
 this because the hold feature lets you know when you've been on hold longer 
